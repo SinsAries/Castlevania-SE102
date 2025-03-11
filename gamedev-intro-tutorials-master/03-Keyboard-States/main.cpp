@@ -24,11 +24,12 @@
 #include "Mario.h"
 #include "Brick.h"
 #include "Simon.h"
+#include "AutoWalkSimon.h"
 
 #include "SampleKeyEventHandler.h"
 
 #define WINDOW_CLASS_NAME L"SampleWindow"
-#define MAIN_WINDOW_TITLE L"03 - Keyboard and Mario states"
+#define MAIN_WINDOW_TITLE L"Thanh dep trai vcl"
 #define WINDOW_ICON_PATH L"mario.ico"
 
 
@@ -61,6 +62,7 @@
 
 CMario* mario = NULL;
 CSimon* simon = NULL;
+CAutoWalkSimon* autoWalkSimon = NULL;
 
 CSampleKeyHandler* keyHandler;
 
@@ -151,6 +153,9 @@ void LoadResources()
 
 	simon = new CSimon(SIMON_START_X, SIMON_START_Y);
 	objects.push_back(simon);
+	autoWalkSimon = new CAutoWalkSimon(SIMON_START_X, SIMON_START_Y, 0.1f);
+	objects.push_back(autoWalkSimon);
+	
 
 	//// Load Mario animations
 	//LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
@@ -271,6 +276,12 @@ void LoadResources()
 	for (int i=0;i<NUM_BRICKS;i++) 
 	{
 		CBrick* b = new CBrick(BRICK_X + i * BRICK_WIDTH, BRICK_Y);
+		objects.push_back(b);
+	}
+
+	for (int i = 0; i < NUM_BRICKS; i++)
+	{
+		CBrick* b = new CBrick(BRICK_X + i * BRICK_WIDTH, BRICK_Y - 110);
 		objects.push_back(b);
 	}
 }
