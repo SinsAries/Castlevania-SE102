@@ -316,6 +316,15 @@ void LoadResources()
 		sprites->Add(20102, 10, 482, 26, 500, texSimon);
 		sprites->Add(20103, 27, 485, 51, 493, texSimon);
 
+		// WEAPON_RIGHT
+		sprites->Add(20111, 1588, 485, 1595, 508, texSimon);
+		sprites->Add(20112, 1572, 482, 1586, 500, texSimon);
+		sprites->Add(20113, 1547, 485, 1571, 493, texSimon);
+
+		// WEAPON_IDLE
+		sprites->Add(20211, 1572, 482, 1586, 500, texSimon);
+
+
 		LPANIMATION ani;
 
 		ani = new CAnimation(300);
@@ -324,9 +333,15 @@ void LoadResources()
 		ani->Add(20103);
 		animations->Add(ID_ANI_WEAPON_LEFT, ani);
 		
-		ani = new CAnimation(100);
-		ani->Add(20101);
+		ani = new CAnimation(300);
+		ani->Add(20111);
+		ani->Add(20112);
+		ani->Add(20113);
 		animations->Add(ID_ANI_WEAPON_RIGHT, ani);
+
+		ani = new CAnimation(100);
+		ani->Add(20211);
+		animations->Add(ID_ANI_WEAPON_IDLE, ani);
 
 		weapon = new CWeapon(SIMON_START_X, SIMON_START_Y);
 		objects.push_back(weapon);

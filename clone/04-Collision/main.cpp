@@ -511,8 +511,8 @@ void Update(DWORD dt)
 	mario->GetPosition(cx, cy);
 
 	cx -= SCREEN_WIDTH / 2;
-	cy = 0;
-	//cy -= SCREEN_HEIGHT / 2;
+	//cy = 0;
+	cy -= SCREEN_HEIGHT / 2;
 
 	if (cx < 0) cx = 0;
 

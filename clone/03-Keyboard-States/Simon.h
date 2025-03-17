@@ -59,6 +59,7 @@ protected:
 	BOOLEAN isSitting;
 	BOOLEAN isAttacking;
 	int attackTime;
+	int currentId;
 public:
 	friend class CWeapon;
 	CSimon(float x, float y) : CGameObject(x, y) {

@@ -75,6 +75,7 @@ void CSimon::Render()
 			aniId = (nx > 0) ? ID_ANI_SIMON_IDLE_RIGHT : ID_ANI_SIMON_IDLE_LEFT;
 		}
 	}
+	currentId = aniId;
 
 	animations->Get(aniId)->Render(x, y);
 }
@@ -82,6 +83,8 @@ void CSimon::Render()
 
 void CSimon::SetState(int state)
 {
+	CAnimations* animations = CAnimations::GetInstance();
+
 	switch (state)
 	{
 	case SIMON_STATE_WALKING_RIGHT:
@@ -107,8 +110,28 @@ void CSimon::SetState(int state)
 		}
 		break;
 	case SIMON_STATE_ATTACK:
+		if (isAttacking && attackTime > 150) return;
+
 		isAttacking = true;
 		attackTime = 900;
+
+		if (nx >= 0)
+		{
+			animations->Get(ID_ANI_WEAPON_RIGHT)->Reset();
+			animations->Get(ID_ANI_SIMON_STAND_ATTACK_RIGHT)->Reset();
+		}
+		else
+		{
+			animations->Get(ID_ANI_WEAPON_LEFT)->Reset();
+			animations->Get(ID_ANI_SIMON_STAND_ATTACK_LEFT)->Reset();
+		}
+		if (isSitting) {
+			if (nx >= 0)
+				animations->Get(ID_ANI_SIMON_SIT_ATTACK_RIGHT)->Reset();
+			else
+				animations->Get(ID_ANI_SIMON_SIT_ATTACK_LEFT)->Reset();
+		}
+
 		break;
 	case SIMON_STATE_IDLE:
 		vx = 0;
@@ -126,50 +149,51 @@ void CSimon::KeyState(BYTE* states)
 	}
 
 	CGame* game = CGame::GetInstance();
-	if (game->IsKeyDown(DIK_RIGHT))
-	{
+
+	// Kiểm tra nếu nhấn đồng thời phím DOWN và SPACE (Ngồi và Tấn công)
+	if (!isAttacking && game->IsKeyDown(DIK_DOWN) && game->IsKeyDown(DIK_SPACE)) {
+		if (!isSitting) {
+			SetState(SIMON_STATE_SIT);  // Đảm bảo Simon đang ngồi
+		}
+		SetState(SIMON_STATE_ATTACK);  // Thực hiện tấn công
+	}
+	else if (game->IsKeyDown(DIK_RIGHT)) {
 		SetState(SIMON_STATE_WALKING_RIGHT);
-		if (game->IsKeyDown(DIK_UP))
-		{
+		if (game->IsKeyDown(DIK_UP)) {
 			SetState(SIMON_STATE_JUMP);
 		}
-		if (game->IsKeyDown(DIK_SPACE))
-		{
+		if (!isAttacking && game->IsKeyDown(DIK_SPACE)) {
 			SetState(SIMON_STATE_ATTACK);
 		}
 	}
-	else if (game->IsKeyDown(DIK_LEFT))
-	{
+	else if (game->IsKeyDown(DIK_LEFT)) {
 		SetState(SIMON_STATE_WALKING_LEFT);
-		if (game->IsKeyDown(DIK_UP))
-		{
+		if (game->IsKeyDown(DIK_UP)) {
 			SetState(SIMON_STATE_JUMP);
 		}
-		if (game->IsKeyDown(DIK_SPACE))
-		{
+		if (!isAttacking && game->IsKeyDown(DIK_SPACE)) {
 			SetState(SIMON_STATE_ATTACK);
 		}
 	}
-	else if (!isAttacking)
-	{
+	else if (!isAttacking) {
 		SetState(SIMON_STATE_IDLE);
 	}
-	else if (game->IsKeyDown(DIK_UP))
-	{
+	else if (game->IsKeyDown(DIK_UP)) {
 		SetState(SIMON_STATE_JUMP);
 	}
 
-	if (game->IsKeyDown(DIK_DOWN))
-	{
+	// Nếu chỉ nhấn phím DOWN mà không nhấn phím SPACE, Simon sẽ ngồi
+	if (game->IsKeyDown(DIK_DOWN) && !game->IsKeyDown(DIK_SPACE)) {
 		SetState(SIMON_STATE_SIT);
 	}
 
-	if (game->IsKeyDown(DIK_SPACE))
-	{
+	// Kiểm tra phím tấn công nếu phím SPACE được nhấn
+	if (!isAttacking && game->IsKeyDown(DIK_SPACE) && !game->IsKeyDown(DIK_DOWN)) {
 		SetState(SIMON_STATE_IDLE);
 		SetState(SIMON_STATE_ATTACK);
 	}
 }
+
 
 void CSimon::OnKeyDown(int KeyCode)
 {

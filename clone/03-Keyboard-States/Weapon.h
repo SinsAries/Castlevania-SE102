@@ -15,6 +15,7 @@
 
 #define ID_ANI_WEAPON_LEFT 2000
 #define ID_ANI_WEAPON_RIGHT 2001
+#define ID_ANI_WEAPON_IDLE 2002
 
 #pragma endregion
 
@@ -23,9 +24,11 @@ class CWeapon : public CGameObject
 protected:
 	int curStep = -1;
 	int lastStepTime = 0;
+	int dx[4], dy[4];
 public:
 	CWeapon(float x, float y) : CGameObject(x, y) { }
 	void Update(DWORD dt);
 	void Render();
+	void SetDxDy(int state);
 };
 
