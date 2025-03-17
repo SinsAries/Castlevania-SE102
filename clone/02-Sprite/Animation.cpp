@@ -34,3 +34,13 @@ void CAnimation::Render(float x, float y)
 	frames[currentFrame]->GetSprite()->Draw(x, y);
 }
 
+void CAnimation::Reset()
+{
+	currentFrame = -1;
+	lastFrameTime = -1;
+}
+
+int CAnimation::GetCurrentFrame()
+{
+	return currentFrame;
+}
