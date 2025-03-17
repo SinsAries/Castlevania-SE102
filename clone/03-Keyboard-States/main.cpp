@@ -23,6 +23,7 @@
 
 #include "Mario.h"
 #include "Weapon.h"
+#include "Simon.h"
 
 #include "SampleKeyEventHandler.h"
 
@@ -39,15 +40,20 @@
 #define ID_TEX_MARIO 0
 #define ID_TEX_ENEMY 10
 #define ID_TEX_MISC 20
+#define ID_TEX_SIMON 30
 
 #define ID_SPRITE_BRICK 20001
 
 #define TEXTURES_DIR L"textures"
 #define TEXTURE_PATH_MARIO TEXTURES_DIR "\\mario.png"
 #define TEXTURE_PATH_MISC TEXTURES_DIR "\\misc.png"
+#define TEXTURE_PATH_SIMON TEXTURES_DIR "\\simon.png"
 
 #define MARIO_START_X 200.0f
 #define MARIO_START_Y 10.0f
+
+#define SIMON_START_X 200.0f
+#define SIMON_START_Y 10.0f
 
 #define BRICK_X 0.0f
 #define BRICK_Y GROUND_Y + 20.0f
@@ -55,6 +61,7 @@
 
 CMario* mario = NULL;
 CWeapon* weapon = NULL;
+CSimon* simon = NULL;
 
 CSampleKeyHandler* keyHandler;
 
@@ -81,132 +88,247 @@ void LoadResources()
 {
 	CTextures* textures = CTextures::GetInstance();
 
-	textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
+	//textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
 	textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
+	textures->Add(ID_TEX_SIMON, TEXTURE_PATH_SIMON);
 
 	CSprites* sprites = CSprites::GetInstance();
 	CAnimations* animations = CAnimations::GetInstance();
 	{
-		LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
+		//LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
 
-		sprites->Add(10001, 246, 154, 260, 181, texMario);
+		//sprites->Add(10001, 246, 154, 260, 181, texMario);
 
-		sprites->Add(10002, 275, 154, 290, 181, texMario);
-		sprites->Add(10003, 304, 154, 321, 181, texMario);
+		//sprites->Add(10002, 275, 154, 290, 181, texMario);
+		//sprites->Add(10003, 304, 154, 321, 181, texMario);
 
-		sprites->Add(10011, 186, 154, 200, 181, texMario);
+		//sprites->Add(10011, 186, 154, 200, 181, texMario);
 
-		sprites->Add(10012, 155, 154, 170, 181, texMario);
-		sprites->Add(10013, 125, 154, 140, 181, texMario);
+		//sprites->Add(10012, 155, 154, 170, 181, texMario);
+		//sprites->Add(10013, 125, 154, 140, 181, texMario);
 
-		// RUNNING RIGHT 
-		sprites->Add(10021, 335, 154, 335 + 18, 154 + 26, texMario);
-		sprites->Add(10022, 363, 154, 363 + 18, 154 + 26, texMario);
-		sprites->Add(10023, 393, 154, 393 + 18, 154 + 26, texMario);
+		//// RUNNING RIGHT 
+		//sprites->Add(10021, 335, 154, 335 + 18, 154 + 26, texMario);
+		//sprites->Add(10022, 363, 154, 363 + 18, 154 + 26, texMario);
+		//sprites->Add(10023, 393, 154, 393 + 18, 154 + 26, texMario);
 
-		// RUNNING LEFT
-		sprites->Add(10031, 92, 154, 92 + 18, 154 + 26, texMario);
-		sprites->Add(10032, 66, 154, 66 + 18, 154 + 26, texMario);
-		sprites->Add(10033, 35, 154, 35 + 18, 154 + 26, texMario);
+		//// RUNNING LEFT
+		//sprites->Add(10031, 92, 154, 92 + 18, 154 + 26, texMario);
+		//sprites->Add(10032, 66, 154, 66 + 18, 154 + 26, texMario);
+		//sprites->Add(10033, 35, 154, 35 + 18, 154 + 26, texMario);
 
-		// JUMP WALK RIGHT & LEFT 
-		sprites->Add(10041, 395, 275, 395 + 16, 275 + 25, texMario);
-		sprites->Add(10042, 35, 275, 35 + 16, 275 + 25, texMario);
+		//// JUMP WALK RIGHT & LEFT 
+		//sprites->Add(10041, 395, 275, 395 + 16, 275 + 25, texMario);
+		//sprites->Add(10042, 35, 275, 35 + 16, 275 + 25, texMario);
 
-		// JUMP RUN RIGHT & LEFT 
-		sprites->Add(10043, 395, 195, 395 + 18, 195 + 25, texMario);
-		sprites->Add(10044, 33, 195, 33 + 18, 195 + 25, texMario);
+		//// JUMP RUN RIGHT & LEFT 
+		//sprites->Add(10043, 395, 195, 395 + 18, 195 + 25, texMario);
+		//sprites->Add(10044, 33, 195, 33 + 18, 195 + 25, texMario);
 
-		// SIT RIGHT/LEFT
-		sprites->Add(10051, 426, 239, 426 + 14, 239 + 17, texMario);
-		sprites->Add(10052, 5, 239, 5 + 14, 239 + 17, texMario);
+		//// SIT RIGHT/LEFT
+		//sprites->Add(10051, 426, 239, 426 + 14, 239 + 17, texMario);
+		//sprites->Add(10052, 5, 239, 5 + 14, 239 + 17, texMario);
 
-		// BRACING RIGHT/LEFT
-		sprites->Add(10061, 425, 154, 425 + 15, 154 + 27, texMario);
-		sprites->Add(10062, 5, 154, 5 + 15, 154 + 27, texMario);
+		//// BRACING RIGHT/LEFT
+		//sprites->Add(10061, 425, 154, 425 + 15, 154 + 27, texMario);
+		//sprites->Add(10062, 5, 154, 5 + 15, 154 + 27, texMario);
 
-		LPANIMATION ani;
+		//LPANIMATION ani;
 
-		ani = new CAnimation(100);
-		ani->Add(10001);
-		animations->Add(ID_ANI_MARIO_IDLE_RIGHT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10001);
+		//animations->Add(ID_ANI_MARIO_IDLE_RIGHT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10011);
-		animations->Add(ID_ANI_MARIO_IDLE_LEFT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10011);
+		//animations->Add(ID_ANI_MARIO_IDLE_LEFT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10001);
-		ani->Add(10002);
-		ani->Add(10003);
-		animations->Add(ID_ANI_MARIO_WALKING_RIGHT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10001);
+		//ani->Add(10002);
+		//ani->Add(10003);
+		//animations->Add(ID_ANI_MARIO_WALKING_RIGHT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10011);
-		ani->Add(10012);
-		ani->Add(10013);
-		animations->Add(ID_ANI_MARIO_WALKING_LEFT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10011);
+		//ani->Add(10012);
+		//ani->Add(10013);
+		//animations->Add(ID_ANI_MARIO_WALKING_LEFT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10021);
-		ani->Add(10022);
-		ani->Add(10023);
-		animations->Add(ID_ANI_MARIO_RUNNING_RIGHT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10021);
+		//ani->Add(10022);
+		//ani->Add(10023);
+		//animations->Add(ID_ANI_MARIO_RUNNING_RIGHT, ani);
 
-		ani = new CAnimation(50);	// Mario runs faster hence animation speed should be faster
-		ani->Add(10031);
-		ani->Add(10032);
-		ani->Add(10033);
-		animations->Add(ID_ANI_MARIO_RUNNING_LEFT, ani);
+		//ani = new CAnimation(50);	// Mario runs faster hence animation speed should be faster
+		//ani->Add(10031);
+		//ani->Add(10032);
+		//ani->Add(10033);
+		//animations->Add(ID_ANI_MARIO_RUNNING_LEFT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10041);
-		animations->Add(ID_ANI_MARIO_JUMP_WALK_RIGHT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10041);
+		//animations->Add(ID_ANI_MARIO_JUMP_WALK_RIGHT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10042);
-		animations->Add(ID_ANI_MARIO_JUMP_WALK_LEFT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10042);
+		//animations->Add(ID_ANI_MARIO_JUMP_WALK_LEFT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10043);
-		animations->Add(ID_ANI_MARIO_JUMP_RUN_RIGHT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10043);
+		//animations->Add(ID_ANI_MARIO_JUMP_RUN_RIGHT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10044);
-		animations->Add(ID_ANI_MARIO_JUMP_RUN_LEFT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10044);
+		//animations->Add(ID_ANI_MARIO_JUMP_RUN_LEFT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10051);
-		animations->Add(ID_ANI_MARIO_SIT_RIGHT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10051);
+		//animations->Add(ID_ANI_MARIO_SIT_RIGHT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10052);
-		animations->Add(ID_ANI_MARIO_SIT_LEFT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10052);
+		//animations->Add(ID_ANI_MARIO_SIT_LEFT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10061);
-		animations->Add(ID_ANI_MARIO_BRACE_RIGHT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10061);
+		//animations->Add(ID_ANI_MARIO_BRACE_RIGHT, ani);
 
-		ani = new CAnimation(100);
-		ani->Add(10062);
-		animations->Add(ID_ANI_MARIO_BRACE_LEFT, ani);
+		//ani = new CAnimation(100);
+		//ani->Add(10062);
+		//animations->Add(ID_ANI_MARIO_BRACE_LEFT, ani);
 
-		mario = new CMario(MARIO_START_X, MARIO_START_Y);
-		CGame::GetInstance()->InitKeyboard(mario);
-		objects.push_back(mario);
+		//mario = new CMario(MARIO_START_X, MARIO_START_Y);
+		//CGame::GetInstance()->InitKeyboard(mario);
+		//objects.push_back(mario);
 	}
 
 	{
-		LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
-		sprites->Add(20001, 431, 226, 438, 240, texMisc);
+		LPTEXTURE texSimon = textures->Get(ID_TEX_SIMON);
+		
+		// WALK RIGHT
+		sprites->Add(10101, 1519, 21, 1534, 53, texSimon);
+		sprites->Add(10102, 1536, 21, 1551, 53, texSimon);
+		sprites->Add(10103, 1553, 21, 1568, 53, texSimon);
+
+		// WALK LEFT
+		sprites->Add(10111, 29, 21, 44, 53, texSimon);
+		sprites->Add(10112, 46, 21, 61, 53, texSimon);
+		sprites->Add(10113, 63, 21, 78, 53, texSimon);
+
+		// IDLE RIGHT
+		sprites->Add(10121, 1581, 21, 1596, 53, texSimon);
+
+		// IDLE LEFT
+		sprites->Add(10131, 1, 21, 16, 53, texSimon);
+
+		// JUMP/DUCK RIGHT
+		sprites->Add(10141, 1498, 21, 1513, 46, texSimon);
+
+		// JUMP/DUCK LEFT
+		sprites->Add(10151, 84, 21, 99, 46, texSimon);
+
+		// STAND ATTACK RIGHT
+		sprites->Add(10161, 1573, 79, 1596, 108, texSimon);
+		sprites->Add(10162, 1556, 79, 1571, 108, texSimon);
+		sprites->Add(10163, 1531, 79, 1552, 108, texSimon);
+
+		// STAND ATTACK LEFT
+		sprites->Add(10171, 1, 79, 24, 108, texSimon);
+		sprites->Add(10172, 26, 79, 41, 108, texSimon);
+		sprites->Add(10173, 45, 79, 66, 108, texSimon);
+
+		// SIT ATTACK RIGHT
+		sprites->Add(10181, 1427, 79, 1450, 101, texSimon);
+		sprites->Add(10182, 1410, 79, 1425, 101, texSimon);
+		sprites->Add(10183, 1385, 79, 1406, 101, texSimon);
+
+		// SIT ATTACK LEFT
+		sprites->Add(10191, 147, 79, 170, 101, texSimon);
+		sprites->Add(10192, 172, 79, 187, 101, texSimon);
+		sprites->Add(10193, 191, 79, 212, 101, texSimon);
+
+		LPANIMATION ani;
+		
+		ani = new CAnimation(100);
+		ani->Add(10101);
+		ani->Add(10102);
+		ani->Add(10103);
+		animations->Add(ID_ANI_SIMON_WALKING_RIGHT, ani);
+
+		ani = new CAnimation(100);
+		ani->Add(10111);
+		ani->Add(10112);
+		ani->Add(10113);
+		animations->Add(ID_ANI_SIMON_WALKING_LEFT, ani);
+
+		ani = new CAnimation(100);
+		ani->Add(10121);
+		animations->Add(ID_ANI_SIMON_IDLE_RIGHT, ani);
+
+		ani = new CAnimation(100);
+		ani->Add(10131);
+		animations->Add(ID_ANI_SIMON_IDLE_LEFT, ani);
+
+		ani = new CAnimation(100);
+		ani->Add(10141);
+		animations->Add(ID_ANI_SIMON_SIT_RIGHT, ani);
+
+		ani = new CAnimation(100);
+		ani->Add(10151);
+		animations->Add(ID_ANI_SIMON_SIT_LEFT, ani);
+
+		ani = new CAnimation(300);
+		ani->Add(10161);
+		ani->Add(10162);
+		ani->Add(10163);
+		animations->Add(ID_ANI_SIMON_STAND_ATTACK_RIGHT, ani);
+
+		ani = new CAnimation(300);
+		ani->Add(10171);
+		ani->Add(10172);
+		ani->Add(10173);
+		animations->Add(ID_ANI_SIMON_STAND_ATTACK_LEFT, ani);
+
+		ani = new CAnimation(300);
+		ani->Add(10181);
+		ani->Add(10182);
+		ani->Add(10183);
+		animations->Add(ID_ANI_SIMON_SIT_ATTACK_RIGHT, ani);
+
+		ani = new CAnimation(300);
+		ani->Add(10191);
+		ani->Add(10192);
+		ani->Add(10193);
+		animations->Add(ID_ANI_SIMON_SIT_ATTACK_LEFT, ani);
+
+		simon = new CSimon(SIMON_START_X, SIMON_START_Y);
+		CGame::GetInstance()->InitKeyboard(simon);
+		objects.push_back(simon);
+	}
+
+	{
+		LPTEXTURE texSimon = textures->Get(ID_TEX_SIMON);
+		
+		// WEAPON_LEFT
+		sprites->Add(20101, 1, 485, 8, 508, texSimon);
+		sprites->Add(20102, 10, 482, 26, 500, texSimon);
+		sprites->Add(20103, 27, 485, 51, 493, texSimon);
 
 		LPANIMATION ani;
 
+		ani = new CAnimation(300);
+		ani->Add(20101);
+		ani->Add(20102);
+		ani->Add(20103);
+		animations->Add(ID_ANI_WEAPON_LEFT, ani);
+		
 		ani = new CAnimation(100);
-		ani->Add(20001);
+		ani->Add(20101);
+		animations->Add(ID_ANI_WEAPON_RIGHT, ani);
 
-		animations->Add(ID_ANI_WEAPON, ani);
-		weapon = new CWeapon(MARIO_START_X, MARIO_START_Y);
+		weapon = new CWeapon(SIMON_START_X, SIMON_START_Y);
 		objects.push_back(weapon);
 	}
 }
