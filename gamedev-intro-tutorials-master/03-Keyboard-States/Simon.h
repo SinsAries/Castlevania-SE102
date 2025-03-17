@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "KeyEventHandler.h"
 
 #include "Animation.h"
 #include "Animations.h"
@@ -15,7 +16,7 @@
 #define SIMON_JUMP_SPEED_Y		0.5f
 #define SIMON_JUMP_RUN_SPEED_Y	0.6f
 
-#define SIMON_GRAVITY			0.002f
+#define SIMON_GRAVITY			0.0f
 
 #define SIMON_STATE_IDLE			1000
 #define SIMON_STATE_WALKING_RIGHT	1100
@@ -59,7 +60,7 @@
 
 #define SIMON_SIT_HEIGHT_ADJUST 4.0f
 
-class CSimon : public CGameObject
+class CSimon : public CGameObject, public CKeyEventHandler
 {
 	BOOLEAN isSitting;
 	float maxVx;
@@ -74,4 +75,7 @@ public:
 	void Update(DWORD dt);
 	void Render();
 	void SetState(int state);
+	virtual void KeyState(BYTE* states);
+	virtual void OnKeyDown(int KeyCode);
+	virtual void OnKeyUp(int KeyCode);
 };

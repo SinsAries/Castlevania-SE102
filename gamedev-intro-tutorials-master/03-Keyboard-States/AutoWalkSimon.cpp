@@ -5,13 +5,13 @@ void CAutoWalkSimon::Update(DWORD dt)
 {
 
 	// simple fall down
-	vy += SIMON_GRAVITY * dt;
-	y += vy * dt;
+	/*vy += SIMON_GRAVITY * dt;
+	y += vy * dt;*/
 
-	if (y > GROUND_Y_2)
+	/*if (y > GROUND_Y_2)
 	{
 		vy = 0; y = GROUND_Y_2;
-	}
+	}*/
 
 	x += vx * dt;
 

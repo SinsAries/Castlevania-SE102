@@ -8,8 +8,8 @@
 #define SIMON_WIDTH 16
 #define SIMON_LENGTH 32
 
-#define SIMON_GRAVITY			0.002f
-#define GROUND_Y_2 50.0f
+//#define SIMON_GRAVITY			0.002f
+//#define GROUND_Y_2 100.0f
 
 #pragma region ANIMATION_ID
 

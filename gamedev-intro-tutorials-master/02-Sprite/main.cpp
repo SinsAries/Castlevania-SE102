@@ -50,7 +50,7 @@
 
 CMario *mario;
 #define MARIO_START_X 10.0f
-#define MARIO_START_Y 130.0f
+#define MARIO_START_Y 50.0f
 #define MARIO_START_VX 0.1f
 
 CBrick *brick;
@@ -60,6 +60,8 @@ CSimon* simon2;
 #define SIMON_START_X 10.0f
 #define SIMON_START_Y 130.0f
 #define SIMON_START_VX 0.1f
+
+vector<LPGAMEOBJECT> objects;
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -82,7 +84,7 @@ void LoadResources()
 {
 	CTextures * textures = CTextures::GetInstance();
 
-	//textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
+	textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
 	//textures->Add(ID_ENEMY_TEXTURE, TEXTURE_PATH_ENEMIES, D3DCOLOR_XRGB(156, 219, 239));
 	textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
 	textures->Add(ID_TEX_SIMON, TEXTURE_PATH_SIMON);
@@ -115,56 +117,40 @@ void LoadResources()
 	aniSimon->Add(10043);
 	animations->Add(541, aniSimon);
 
+	LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
 
-	//LPTEXTURE texMario = textures->Get(ID_TEX_MARIO);
+	sprites->Add(10101, 246, 154, 259, 181, texMario);
+	sprites->Add(10102, 275, 154, 290, 181, texMario);
+	sprites->Add(10103, 304, 154, 321, 181, texMario);
 
-	//// readline => id, left, top, right 
+	sprites->Add(10111, 186, 154, 200, 181, texMario);
+	sprites->Add(10112, 155, 154, 171, 181, texMario);
+	sprites->Add(10113, 125, 154, 141, 181, texMario);
 
-	//sprites->Add(10001, 246, 154, 259, 181, texMario);
-	//sprites->Add(10002, 275, 154, 290, 181, texMario);
-	//sprites->Add(10003, 304, 154, 321, 181, texMario);
-
-	//sprites->Add(10011, 186, 154, 200, 181, texMario);
-	//sprites->Add(10012, 155, 154, 171, 181, texMario);
-	//sprites->Add(10013, 125, 154, 141, 181, texMario);
-
-	//CAnimations * animations = CAnimations::GetInstance();
-	//LPANIMATION ani;
-
-	//ani = new CAnimation(100);
-	//ani->Add(10001);
-	//ani->Add(10002);
-	//ani->Add(10003);
-	//animations->Add(500, ani);
-
-
-
-	//ani = new CAnimation(100);
-	//ani->Add(10011);
-	//ani->Add(10012);
-	//ani->Add(10013);
-	//animations->Add(501, ani);
-
-
-
-	//LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
-	//sprites->Add(20001, 300, 117, 317, 133, texMisc);
-	//sprites->Add(20002, 318, 117, 335, 133, texMisc);
-	//sprites->Add(20003, 336, 117, 353, 133, texMisc);
-	//sprites->Add(20004, 354, 117, 371, 133, texMisc);
-
-	//ani = new CAnimation(100);
-	//ani->Add(20001,1000);
-	//ani->Add(20002);
-	//ani->Add(20003);
-	//ani->Add(20004);
-	//animations->Add(510, ani);
+	LPANIMATION ani;
+	
+	ani = new CAnimation(100);
+	ani->Add(10101);
+	ani->Add(10102);
+	ani->Add(10103);
+	animations->Add(2830, ani);
+	
+	ani = new CAnimation(100);
+	ani->Add(10111);
+	ani->Add(10112);
+	ani->Add(10113);
+	animations->Add(2831, ani);
 	
 	
-	//mario = new CMario(MARIO_START_X, MARIO_START_Y, MARIO_START_VX);
 	brick = new CBrick(100.0f, 100.0f);
-	simon = new CSimon(SIMON_START_X, SIMON_START_Y, SIMON_START_VX);
-	simon2 = new CSimon(SIMON_START_X, SIMON_START_Y - 32, SIMON_START_VX);
+	for (int i = 0; i < 10; i++) {
+		simon = new CSimon(SIMON_START_X, SIMON_START_Y, 0.1f);
+		mario = new CMario(MARIO_START_X, MARIO_START_Y + 32 * (i / 2), MARIO_START_VX);
+		if (i % 2)
+			objects.push_back(simon);
+		else
+			objects.push_back(mario);
+	}
 }
 
 /*
@@ -173,9 +159,9 @@ void LoadResources()
 */
 void Update(DWORD dt)
 {
-	//mario->Update(dt);
-	simon->Update(dt);
-	simon2->Update(dt);
+	for (auto& object : objects) {
+		object->Update(dt);
+	}
 }
 
 void Render()
@@ -199,9 +185,9 @@ void Render()
 		pD3DDevice->OMSetBlendState(g->GetAlphaBlending(), NewBlendFactor, 0xffffffff);
 
 		//brick->Render();
-		//mario->Render();
-		simon->Render();
-		simon2->Render();
+		for (auto& object : objects) {
+			object->Render();
+		}
 
 		// Uncomment this line to see how to draw a porttion of a texture  
 		//g->Draw(10, 10, texMisc, 300, 117, 316, 133);
