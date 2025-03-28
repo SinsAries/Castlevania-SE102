@@ -11,3 +11,5 @@ CGameObject::CGameObject()
 	nx = 1;	
 	state = -1;
 }
+
+CGameObject::~CGameObject() {}

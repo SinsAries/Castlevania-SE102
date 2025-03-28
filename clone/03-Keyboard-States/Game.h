@@ -40,6 +40,9 @@ class CGame
 
 	LPKEYEVENTHANDLER keyHandler;
 
+	float cam_x = 0.0f;
+	float cam_y = 0.0f;
+
 	HINSTANCE hInstance;
 
 public:
@@ -81,6 +84,9 @@ public:
 	int GetBackBufferHeight() { return backBufferHeight; }
 
 	static CGame* GetInstance();
+
+	void SetCamPos(float x, float y) { cam_x = x; cam_y = y; }
+	void GetCamPos(float& x, float& y) { x = cam_x; y = cam_y; }
 
 	~CGame();
 };

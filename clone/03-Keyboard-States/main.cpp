@@ -1,4 +1,4 @@
-/* =============================================================
+﻿/* =============================================================
 	INTRODUCTION TO GAME PROGRAMMING SE102
 	
 	SAMPLE 03 - KEYBOARD AND OBJECT STATE
@@ -24,6 +24,9 @@
 #include "Mario.h"
 #include "Weapon.h"
 #include "Simon.h"
+#include "Brick.h"
+
+#include "TiledBackground.h"
 
 #include "SampleKeyEventHandler.h"
 
@@ -41,13 +44,16 @@
 #define ID_TEX_ENEMY 10
 #define ID_TEX_MISC 20
 #define ID_TEX_SIMON 30
+#define ID_TEX_BACKGROUND 40
 
 #define ID_SPRITE_BRICK 20001
+#define ID_SPRITE_BACKGROUND 20002
 
 #define TEXTURES_DIR L"textures"
 #define TEXTURE_PATH_MARIO TEXTURES_DIR "\\mario.png"
 #define TEXTURE_PATH_MISC TEXTURES_DIR "\\misc.png"
 #define TEXTURE_PATH_SIMON TEXTURES_DIR "\\simon.png"
+#define TEXTURE_PATH_BACKGROUND TEXTURES_DIR "\\background.png"
 
 #define MARIO_START_X 200.0f
 #define MARIO_START_Y 10.0f
@@ -57,11 +63,13 @@
 
 #define BRICK_X 0.0f
 #define BRICK_Y GROUND_Y + 20.0f
-#define NUM_BRICKS 50
+#define NUM_BRICKS 100
 
 CMario* mario = NULL;
 CWeapon* weapon = NULL;
 CSimon* simon = NULL;
+
+CTiledBackground* background = NULL;
 
 CSampleKeyHandler* keyHandler;
 
@@ -91,6 +99,7 @@ void LoadResources()
 	//textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
 	textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
 	textures->Add(ID_TEX_SIMON, TEXTURE_PATH_SIMON);
+	textures->Add(ID_TEX_BACKGROUND, TEXTURE_PATH_BACKGROUND);
 
 	CSprites* sprites = CSprites::GetInstance();
 	CAnimations* animations = CAnimations::GetInstance();
@@ -203,6 +212,34 @@ void LoadResources()
 		//CGame::GetInstance()->InitKeyboard(mario);
 		//objects.push_back(mario);
 	}
+
+	{
+		// Trong LoadResources()
+		LPTEXTURE texBackground = textures->Get(ID_TEX_BACKGROUND); // Hoặc texture riêng cho background
+		sprites->Add(ID_SPRITE_BACKGROUND, 18, 92, 717, 247, texBackground);
+
+		int mapWidth = 20;
+		int mapHeight = 15;
+
+		// Tạo sprite từ sprites đã load
+		CSprite* bgSprite = CSprites::GetInstance()->Get(ID_SPRITE_BACKGROUND);
+
+		// Tạo background object và thêm vào danh sách objects
+		CTiledBackground* background = new CTiledBackground(0, 0, bgSprite, mapWidth, mapHeight);
+		objects.push_back(background);
+	}
+	
+	//{
+	//	// Trong LoadResources()
+	//	LPTEXTURE texBackground = textures->Get(ID_TEX_BACKGROUND);
+	//	CSprite* originalBgSprite = new CSprite(ID_SPRITE_BACKGROUND, 18, 92, 717, 247, texBackground);
+
+	//	// Tạo background object với kích thước map (điều chỉnh theo nhu cầu)
+	//	int mapWidth = 20;   // Số lượng tile theo chiều ngang của map
+	//	int mapHeight = 15;  // Số lượng tile theo chiều dọc của map
+	//	CTiledBackground* background = new CTiledBackground(0, 0, originalBgSprite, mapWidth, mapHeight);
+	//	objects.push_back(background);
+	//}
 
 	{
 		LPTEXTURE texSimon = textures->Get(ID_TEX_SIMON);
@@ -346,6 +383,24 @@ void LoadResources()
 		weapon = new CWeapon(SIMON_START_X, SIMON_START_Y);
 		objects.push_back(weapon);
 	}
+
+	{
+		// Brick objects 
+		LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
+		sprites->Add(ID_SPRITE_BRICK, 372, 153, 372 + 15, 153 + 15, texMisc);
+
+		LPANIMATION ani;
+
+		ani = new CAnimation(100);
+		ani->Add(ID_SPRITE_BRICK);
+		animations->Add(ID_ANI_BRICK, ani);
+
+		for (int i = 0; i < NUM_BRICKS; i++)
+		{
+			CBrick* b = new CBrick(BRICK_X + i * BRICK_WIDTH, BRICK_Y);
+			objects.push_back(b);
+		}
+	}
 }
 
 /*
@@ -358,6 +413,18 @@ void Update(DWORD dt)
 	{
 		objects[i]->Update(dt);
 	}
+
+	// Update camera to follow mario
+	float cx, cy;
+	simon->GetPosition(cx, cy);
+
+	cx -= SCREEN_WIDTH / 2;
+	//cy = 0;
+	cy -= SCREEN_HEIGHT / 2;
+
+	if (cx < 0) cx = 0;
+
+	CGame::GetInstance()->SetCamPos(cx, cy);
 }
 
 void Render()

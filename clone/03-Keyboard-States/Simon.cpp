@@ -23,7 +23,7 @@ void CSimon::Update(DWORD dt)
 	}
 
 	// Kiểm tra biên giới
-	if (vx > 0 && x > 290) x = 290;
+	//if (vx > 0 && x > 290) x = 290;
 	if (vx < 0 && x < 0) x = 0;
 }
 
@@ -150,6 +150,9 @@ void CSimon::KeyState(BYTE* states)
 
 	CGame* game = CGame::GetInstance();
 
+	if (y == GROUND_Y && game->IsKeyDown(DIK_UP)) 
+		SetState(SIMON_STATE_JUMP);
+
 	// Kiểm tra nếu nhấn đồng thời phím DOWN và SPACE (Ngồi và Tấn công)
 	if (!isAttacking && game->IsKeyDown(DIK_DOWN) && game->IsKeyDown(DIK_SPACE)) {
 		if (!isSitting) {
@@ -159,18 +162,12 @@ void CSimon::KeyState(BYTE* states)
 	}
 	else if (game->IsKeyDown(DIK_RIGHT)) {
 		SetState(SIMON_STATE_WALKING_RIGHT);
-		if (game->IsKeyDown(DIK_UP)) {
-			SetState(SIMON_STATE_JUMP);
-		}
 		if (!isAttacking && game->IsKeyDown(DIK_SPACE)) {
 			SetState(SIMON_STATE_ATTACK);
 		}
 	}
 	else if (game->IsKeyDown(DIK_LEFT)) {
 		SetState(SIMON_STATE_WALKING_LEFT);
-		if (game->IsKeyDown(DIK_UP)) {
-			SetState(SIMON_STATE_JUMP);
-		}
 		if (!isAttacking && game->IsKeyDown(DIK_SPACE)) {
 			SetState(SIMON_STATE_ATTACK);
 		}
