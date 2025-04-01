@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Simon">
+      <UniqueIdentifier>{4ec7d385-4ae1-4cce-8a3a-c3335c2b7dc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Simon\SimonStates">
+      <UniqueIdentifier>{e1293106-dfca-406d-b4ca-fe09173967c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Simon">
+      <UniqueIdentifier>{b743698a-e0b3-44e8-bbac-1a9954f023e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Simon\SimonStates">
+      <UniqueIdentifier>{c4f84dc5-98dd-46ba-90ca-1e66ace2d5e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debug.cpp">
@@ -42,9 +54,6 @@
     <ClCompile Include="Weapon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Simon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -59,6 +68,27 @@
     </ClCompile>
     <ClCompile Include="TiledBackground.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimonState.cpp">
+      <Filter>Source Files\Simon\SimonStates</Filter>
+    </ClCompile>
+    <ClCompile Include="IdleState.cpp">
+      <Filter>Source Files\Simon\SimonStates</Filter>
+    </ClCompile>
+    <ClCompile Include="WalkState.cpp">
+      <Filter>Source Files\Simon\SimonStates</Filter>
+    </ClCompile>
+    <ClCompile Include="AttackState.cpp">
+      <Filter>Source Files\Simon\SimonStates</Filter>
+    </ClCompile>
+    <ClCompile Include="JumpState.cpp">
+      <Filter>Source Files\Simon\SimonStates</Filter>
+    </ClCompile>
+    <ClCompile Include="SitState.cpp">
+      <Filter>Source Files\Simon\SimonStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Simon.cpp">
+      <Filter>Source Files\Simon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,14 +134,32 @@
     <ClInclude Include="Weapon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Simon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Brick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TiledBackground.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimonState.h">
+      <Filter>Header Files\Simon\SimonStates</Filter>
+    </ClInclude>
+    <ClInclude Include="IdleState.h">
+      <Filter>Header Files\Simon\SimonStates</Filter>
+    </ClInclude>
+    <ClInclude Include="AttackState.h">
+      <Filter>Header Files\Simon\SimonStates</Filter>
+    </ClInclude>
+    <ClInclude Include="JumpState.h">
+      <Filter>Header Files\Simon\SimonStates</Filter>
+    </ClInclude>
+    <ClInclude Include="WalkState.h">
+      <Filter>Header Files\Simon\SimonStates</Filter>
+    </ClInclude>
+    <ClInclude Include="SitState.h">
+      <Filter>Header Files\Simon\SimonStates</Filter>
+    </ClInclude>
+    <ClInclude Include="Simon.h">
+      <Filter>Header Files\Simon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

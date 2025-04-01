@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 
 #include "Animation.h"
@@ -8,6 +8,13 @@
 #include "KeyEventHandler.h"
 #include "Game.h"
 #include "Weapon.h"
+#include "SimonState.h"
+
+class IdleState;
+class WalkState;
+class SitState;
+class JumpState;
+class AttackState;
 
 #pragma region STATE_ID
 
@@ -55,20 +62,22 @@
 
 class CSimon : public CGameObject, public CKeyEventHandler
 {
+	friend class ISimonState;
+	friend class IdleState;
+	friend class WalkState;
+	friend class SitState;
+	friend class JumpState;
+	friend class AttackState;
+	friend class CWeapon;
 protected:
 	BOOLEAN isSitting;
 	BOOLEAN isAttacking;
-	int attackTime;
-	int currentId;
+	ISimonState* currentState;
 public:
-	friend class CWeapon;
-	CSimon(float x, float y) : CGameObject(x, y) {
-		isSitting = false;
-
-	}
+	CSimon(float x, float y);
 	void Update(DWORD dt);
 	void Render();
-	void SetState(int state);
+	void SetState(ISimonState* state);
 	void KeyState(BYTE* states);
 	virtual void OnKeyDown(int KeyCode);
 	virtual void OnKeyUp(int KeyCode);

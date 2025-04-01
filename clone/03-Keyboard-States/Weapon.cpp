@@ -17,10 +17,10 @@ void CWeapon::Update(DWORD dt)
 	}
 
 	// Tính toán trực tiếp frame dựa trên thời gian tấn công
-	float progress = 1.0f - (float)simon->attackTime / 900.0f;
+	float progress = 0;
 	int frame = min((int)(progress * 3), 2);
 
-	SetDxDy(simon->currentId);
+	SetDxDy(0);
 	x = simon->x + dx[frame];
 	y = simon->y + dy[frame];
 }
@@ -39,7 +39,7 @@ void CWeapon::Render()
 	animations->Get(aniId)->Render(x, y);
 }
 
-void CWeapon::SetDxDy(int state = simon->currentId) {
+void CWeapon::SetDxDy(int state = 0) {
 	if (!simon->isAttacking) return;
 	switch (state)
 	{
