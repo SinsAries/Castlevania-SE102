@@ -11,10 +11,12 @@ CSimon::CSimon(float x, float y) : CGameObject(x, y) {
 	nx = 1;
 	isSitting = false;
 	isAttacking = false;
+	attackCoolDown = 0;
 }
 
 void CSimon::Update(DWORD dt)
 {
+	DebugOut(L"[INFO] Current state: %s\n", currentState->GetStateName());
 	currentState->Update(this, dt);
 }
 

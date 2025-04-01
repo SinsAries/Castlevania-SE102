@@ -147,6 +147,7 @@
     <ClCompile Include="TiledBackground.cpp" />
     <ClCompile Include="WalkState.cpp" />
     <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="Whip.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="TiledBackground.h" />
     <ClInclude Include="WalkState.h" />
     <ClInclude Include="Weapon.h" />
+    <ClInclude Include="Whip.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

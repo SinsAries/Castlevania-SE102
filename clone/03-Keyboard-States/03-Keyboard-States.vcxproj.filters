@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Simon\SimonStates">
       <UniqueIdentifier>{c4f84dc5-98dd-46ba-90ca-1e66ace2d5e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Weapon">
+      <UniqueIdentifier>{bea9782a-baab-45a5-8418-f463b563403e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Weapon">
+      <UniqueIdentifier>{02d9fc8c-7dc8-44dd-afa5-d295396fee24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debug.cpp">
@@ -49,9 +55,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SampleKeyEventHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Weapon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
@@ -89,6 +92,12 @@
     </ClCompile>
     <ClCompile Include="Simon.cpp">
       <Filter>Source Files\Simon</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapon.cpp">
+      <Filter>Source Files\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Whip.cpp">
+      <Filter>Source Files\Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -131,9 +140,6 @@
     <ClInclude Include="SampleKeyEventHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Weapon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Brick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -160,6 +166,12 @@
     </ClInclude>
     <ClInclude Include="Simon.h">
       <Filter>Header Files\Simon</Filter>
+    </ClInclude>
+    <ClInclude Include="Weapon.h">
+      <Filter>Header Files\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Whip.h">
+      <Filter>Header Files\Weapon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

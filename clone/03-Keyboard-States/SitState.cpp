@@ -14,7 +14,7 @@ void SitState::Enter(CSimon* simon) {
 void SitState::HandleInput(CSimon* simon, BYTE* states) {
     CGame* game = CGame::GetInstance();
 
-    if (game->IsKeyDown(DIK_SPACE) && !simon->isAttacking) {
+    if (game->IsKeyDown(DIK_SPACE) && !simon->isAttacking && simon->attackCoolDown <= 0) {
         simon->SetState(new AttackState());
         return;
     }
@@ -32,6 +32,7 @@ void SitState::Update(CSimon* simon, DWORD dt) {
         simon->y = GROUND_Y;
         simon->vy = 0;
     }
+    simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
 }
 
 void SitState::Render(CSimon* simon) {

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <Windows.h>
 #include <d3dx10.h>
@@ -13,5 +13,6 @@ public:
 	virtual void Update(CSimon* simon, DWORD dt) = 0;
 	virtual void Render(CSimon* simon) = 0;
 	virtual ~ISimonState() {};
+	virtual const wchar_t* GetStateName() = 0;
 };
 

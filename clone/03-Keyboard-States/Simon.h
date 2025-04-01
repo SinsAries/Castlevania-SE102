@@ -73,6 +73,7 @@ protected:
 	BOOLEAN isSitting;
 	BOOLEAN isAttacking;
 	ISimonState* currentState;
+	int attackCoolDown;
 public:
 	CSimon(float x, float y);
 	void Update(DWORD dt);

@@ -19,7 +19,7 @@ void JumpState::HandleInput(CSimon* simon, BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
 
-	if (game->IsKeyDown(DIK_SPACE) && !simon->isAttacking) {
+	if (game->IsKeyDown(DIK_SPACE) && !simon->isAttacking && simon->attackCoolDown <= 0) {
 		simon->SetState(new AttackState());
 	}
 }
@@ -35,6 +35,7 @@ void JumpState::Update(CSimon* simon, DWORD dt)
 		simon->vy = 0;
 		simon->SetState(new IdleState());
 	}
+	simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
 }
 
 void JumpState::Render(CSimon* simon)

@@ -16,6 +16,8 @@ void IdleState::Enter(CSimon* simon)
 
 void IdleState::HandleInput(CSimon* simon, BYTE* states)
 {
+    DebugOut(L"[INFO] Current attack cooldown: %d\n", simon->attackCoolDown);
+
     CGame* game = CGame::GetInstance();
 
     if (game->IsKeyDown(DIK_RIGHT)) {
@@ -27,7 +29,7 @@ void IdleState::HandleInput(CSimon* simon, BYTE* states)
     else if (game->IsKeyDown(DIK_DOWN)) {
         simon->SetState(new SitState());
     }
-    else if (game->IsKeyDown(DIK_SPACE)) {
+    else if (game->IsKeyDown(DIK_SPACE) && simon->attackCoolDown <= 0) {
         simon->SetState(new AttackState());
     }
     else if (game->IsKeyDown(DIK_UP)) {
@@ -45,6 +47,7 @@ void IdleState::Update(CSimon* simon, DWORD dt)
         simon->y = GROUND_Y;
         simon->vy = 0;
     }
+	simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
 }
 
 void IdleState::Render(CSimon* simon)

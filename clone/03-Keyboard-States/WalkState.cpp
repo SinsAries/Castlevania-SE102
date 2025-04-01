@@ -21,7 +21,7 @@ void WalkState::HandleInput(CSimon* simon, BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
 
-	if (game->IsKeyDown(DIK_SPACE))
+	if (game->IsKeyDown(DIK_SPACE) && simon->attackCoolDown <= 0)
 	{
 		simon->SetState(new AttackState());
 		return;
@@ -71,6 +71,7 @@ void WalkState::Update(CSimon* simon, DWORD dt)
 		simon->vy = 0;
 	}
 	if (simon->x < 0) simon->x = 0;
+	simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
 }
 
 void WalkState::Render(CSimon* simon)
