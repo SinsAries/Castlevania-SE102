@@ -28,9 +28,16 @@ void IdleState::HandleInput(CSimon* simon, BYTE* states)
     }
     else if (game->IsKeyDown(DIK_DOWN)) {
         simon->SetState(new SitState());
+	}
+	else if (game->IsKeyDown(DIK_SPACE) && simon->attackCoolDown <= 0)
+    {
+        simon->SetState(new AttackState(simon, 0));
+        return;
     }
-    else if (game->IsKeyDown(DIK_SPACE) && simon->attackCoolDown <= 0) {
-        simon->SetState(new AttackState());
+    else if (game->IsKeyDown(DIK_X) && simon->attackCoolDown <= 0)
+    {
+        simon->SetState(new AttackState(simon, 1));
+        return;
     }
     else if (game->IsKeyDown(DIK_UP)) {
         simon->SetState(new JumpState());

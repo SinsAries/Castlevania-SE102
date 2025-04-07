@@ -25,6 +25,7 @@
 #include "Weapon.h"
 #include "Simon.h"
 #include "Brick.h"
+#include "Quadtree.h"
 
 #include "TiledBackground.h"
 
@@ -74,6 +75,8 @@ CTiledBackground* background = NULL;
 CSampleKeyHandler* keyHandler;
 
 vector<LPGAMEOBJECT> objects;
+Quad* root = new Quad(0, Point(0, 0), Point(1000, 1000));
+
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -249,8 +252,11 @@ void LoadResources()
 		sprites->Add(20112, 1572, 482, 1586, 500, texSimon);
 		sprites->Add(20113, 1547, 485, 1571, 493, texSimon);
 
-		// WEAPON_IDLE
-		sprites->Add(20211, 1572, 482, 1586, 500, texSimon);
+		// KNIFE_LEFT
+		sprites->Add(20221, 1228, 480, 1243, 488, texSimon);
+
+		// KNIFE_RIGHT
+		sprites->Add(20231, 354, 480, 369, 488, texSimon);
 
 
 		LPANIMATION ani;
@@ -267,9 +273,14 @@ void LoadResources()
 		ani->Add(20113);
 		animations->Add(ID_ANI_WEAPON_RIGHT, ani);
 
+
 		ani = new CAnimation(100);
-		ani->Add(20211);
-		animations->Add(ID_ANI_WEAPON_IDLE, ani);
+		ani->Add(20221);
+		animations->Add(ID_ANI_WEAPON_KNIFE_LEFT, ani);
+
+		ani = new CAnimation(100);
+		ani->Add(20231);
+		animations->Add(ID_ANI_WEAPON_KNIFE_RIGHT, ani);
 	}
 
 	{
@@ -283,10 +294,10 @@ void LoadResources()
 		ani->Add(ID_SPRITE_BRICK);
 		animations->Add(ID_ANI_BRICK, ani);
 
-		for (int i = 0; i < NUM_BRICKS; i++)
+		for (int i = 0; i < 40; i++)
 		{
 			CBrick* b = new CBrick(BRICK_X + i * BRICK_WIDTH, BRICK_Y);
-			objects.push_back(b);
+			root->insert(b);
 		}
 	}
 }
@@ -302,17 +313,11 @@ void Update(DWORD dt)
 		objects[i]->Update(dt);
 	}
 
-	// Update camera to follow mario
-	float cx, cy;
-	simon->GetPosition(cx, cy);
+	// Lấy vị trí của Simon
+	float simonX, simonY;
+	simon->GetPosition(simonX, simonY);
 
-	cx -= SCREEN_WIDTH / 2;
-	//cy = 0;
-	cy -= SCREEN_HEIGHT / 2;
-
-	if (cx < 0) cx = 0;
-
-	CGame::GetInstance()->SetCamPos(cx, cy);
+	CGame::GetInstance()->GetCamera()->FollowSimon(simonX, simonY);
 }
 
 void Render()
@@ -335,6 +340,8 @@ void Render()
 	{
 		objects[i]->Render();
 	}
+
+	root->Render();
 
 	spriteHandler->End();
 	pSwapChain->Present(0, 0);

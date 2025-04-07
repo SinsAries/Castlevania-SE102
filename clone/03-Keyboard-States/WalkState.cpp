@@ -23,7 +23,12 @@ void WalkState::HandleInput(CSimon* simon, BYTE* states)
 
 	if (game->IsKeyDown(DIK_SPACE) && simon->attackCoolDown <= 0)
 	{
-		simon->SetState(new AttackState());
+		simon->SetState(new AttackState(simon, 0));
+		return;
+	} 
+	if (game->IsKeyDown(DIK_X) && simon->attackCoolDown <= 0)
+	{
+		simon->SetState(new AttackState(simon, 1));
 		return;
 	}
 
@@ -71,6 +76,7 @@ void WalkState::Update(CSimon* simon, DWORD dt)
 		simon->vy = 0;
 	}
 	if (simon->x < 0) simon->x = 0;
+	if (simon->x > 990) simon->x = 990;
 	simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
 }
 

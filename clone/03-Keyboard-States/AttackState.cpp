@@ -5,10 +5,20 @@
 #include "SitState.h"
 #include "JumpState.h"
 #include "AttackState.h"
+#include "Whip.h"
+#include "Knife.h"
 
 AttackState::AttackState() {
 	attackTime = 900;
-	whip = new CWhip();
+	whip = new CWhip(0, 0, 1);
+}
+
+AttackState::AttackState(CSimon* simon, int type) {
+	attackTime = 900;
+	if (type == 0)
+		whip = new CWhip(0, 0, 1);
+	else
+		whip = new CKnife(simon->x + 10, simon->y - 10, 1);
 }
 
 AttackState::~AttackState() {
@@ -47,11 +57,9 @@ void AttackState::Update(CSimon* simon, DWORD dt)
 		(simon->nx > 0 ? ID_ANI_SIMON_SIT_ATTACK_RIGHT : ID_ANI_SIMON_SIT_ATTACK_LEFT) :
 		(simon->nx > 0 ? ID_ANI_SIMON_STAND_ATTACK_RIGHT : ID_ANI_SIMON_STAND_ATTACK_LEFT);
 
-	whip->UpdatePosition(simon->x, simon->y, aniId, frame);
+	whip->UpdatePosition(simon->x, simon->y, aniId, frame, dt);
 
 	bool check = attackTime > 0;
-	DebugOut(L"[INFO] Current attack time: %d\n", attackTime);
-	DebugOut(L"[INFO] Current attack time greater than 0: %d\n", check);
     if (attackTime <= 0) {
         simon->isAttacking = false;
 		simon->SetState(new IdleState());

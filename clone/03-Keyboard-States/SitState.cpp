@@ -14,8 +14,14 @@ void SitState::Enter(CSimon* simon) {
 void SitState::HandleInput(CSimon* simon, BYTE* states) {
     CGame* game = CGame::GetInstance();
 
-    if (game->IsKeyDown(DIK_SPACE) && !simon->isAttacking && simon->attackCoolDown <= 0) {
-        simon->SetState(new AttackState());
+    if (game->IsKeyDown(DIK_SPACE) && simon->attackCoolDown <= 0)
+    {
+        simon->SetState(new AttackState(simon, 0));
+        return;
+    }
+    else if (game->IsKeyDown(DIK_X) && simon->attackCoolDown <= 0)
+    {
+        simon->SetState(new AttackState(simon, 1));
         return;
     }
 

@@ -7,7 +7,7 @@ void CWhip::Update(DWORD dt)
 	// Tạm thời không làm gì cả vì vị trí Whip được cập nhật thông qua Simon
 }
 
-void CWhip::UpdatePosition(float simon_x, float simon_y, int aniId, int frame)
+void CWhip::UpdatePosition(float simon_x, float simon_y, int aniId, int frame, DWORD dt)
 {
 	// Cập nhật vị trí whip theo animation và frame hiện tại
 	switch (aniId)

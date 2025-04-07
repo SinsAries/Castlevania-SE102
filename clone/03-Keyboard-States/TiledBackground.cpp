@@ -4,7 +4,7 @@ void CTiledBackground::Render()
 {
     CGame* game = CGame::GetInstance();
     float cx, cy;
-    game->GetCamPos(cx, cy);
+    game->GetCamera()->GetPosition(cx, cy);
     int screenWidth = game->GetBackBufferWidth();
     int screenHeight = game->GetBackBufferHeight();
 

@@ -1,4 +1,4 @@
-#include "Sprite.h"
+ï»¿#include "Sprite.h"
 
 CSprite::CSprite(int id, int left, int top, int right, int bottom, LPTEXTURE tex)
 {
@@ -9,7 +9,7 @@ CSprite::CSprite(int id, int left, int top, int right, int bottom, LPTEXTURE tex
 	this->bottom = bottom;
 	this->texture = tex;
 
-	// Set the sprite’s shader resource view
+	// Set the spriteï¿½s shader resource view
 	sprite.pTexture = tex->getShaderResourceView();
 
 	sprite.TexCoord.x = this->left / (float)tex->getWidth();
@@ -31,7 +31,7 @@ void CSprite::Draw(float x, float y)
 {
 	CGame* g = CGame::GetInstance();
 	float cx, cy;
-	g->GetCamPos(cx, cy);
+	g->GetCamera()->GetPosition(cx, cy);
 
 	cx = (FLOAT)floor(cx);
 	cy = (FLOAT)floor(cy);
@@ -47,5 +47,4 @@ void CSprite::Draw(float x, float y)
 
 	g->GetSpriteHandler()->DrawSpritesImmediate(&sprite, 1, 0, 0);
 }
-
 

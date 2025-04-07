@@ -2,15 +2,16 @@
 
 #include "SimonState.h"
 #include "Simon.h"
-#include "Whip.h"
+#include "Weapon.h"
 
 class AttackState : public ISimonState
 {
 private:
     int attackTime;
-    CWhip* whip;
+    CWeapon* whip;
 public:
     AttackState();
+    AttackState(CSimon* simon, int type);
     ~AttackState();
 
     void Enter(CSimon* simon) override;

@@ -1,4 +1,4 @@
-#include "debug.h"
+ï»¿#include "debug.h"
 #include "Game.h"
 
 CGame* CGame::__instance = NULL;
@@ -123,6 +123,9 @@ void CGame::Init(HWND hWnd, HINSTANCE hInstance)
 
 	DebugOut((wchar_t*)L"[INFO] InitDirectX has been successful\n");
 
+	this->camera = new Camera(backBufferWidth, backBufferHeight);
+	this->camera->SetLimits(0, 0, 1000, 1000);
+
 	return;
 }
 
@@ -140,7 +143,7 @@ void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect)
 
 	D3DX10_SPRITE sprite;
 
-	// Set the sprite’s shader resource view
+	// Set the spriteï¿½s shader resource view
 	sprite.pTexture = tex->getShaderResourceView();
 
 	if (rect == NULL)
@@ -188,7 +191,7 @@ void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect)
 	D3DXMATRIX matScaling;
 	D3DXMatrixScaling(&matScaling, (FLOAT)spriteWidth, (FLOAT)spriteHeight, 1.0f);
 
-	// Setting the sprite’s position and size
+	// Setting the spriteï¿½s position and size
 	sprite.matWorld = (matScaling * matTranslation);
 
 	spriteObject->DrawSpritesImmediate(&sprite, 1, 0, 0);
@@ -262,7 +265,7 @@ int CGame::IsKeyDown(int KeyCode)
 
 void CGame::InitKeyboard(LPKEYEVENTHANDLER handler)
 {
-	HRESULT hr = DirectInput8Create(this->hInstance,DIRECTINPUT_VERSION,IID_IDirectInput8, (VOID**)&di, NULL);
+	HRESULT hr = DirectInput8Create(this->hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&di, NULL);
 	if (hr != DI_OK)
 	{
 		DebugOut(L"[ERROR] DirectInput8Create failed!\n");
@@ -270,7 +273,7 @@ void CGame::InitKeyboard(LPKEYEVENTHANDLER handler)
 	}
 
 	hr = di->CreateDevice(GUID_SysKeyboard, &didv, NULL);
-	if (hr != DI_OK) 
+	if (hr != DI_OK)
 	{
 		DebugOut(L"[ERROR] CreateDevice failed!\n");
 		return;
@@ -304,7 +307,7 @@ void CGame::InitKeyboard(LPKEYEVENTHANDLER handler)
 	dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
 	dipdw.diph.dwObj = 0;
 	dipdw.diph.dwHow = DIPH_DEVICE;
-	dipdw.dwData = KEYBOARD_BUFFER_SIZE; 
+	dipdw.dwData = KEYBOARD_BUFFER_SIZE;
 
 	hr = didv->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
 
@@ -322,7 +325,7 @@ void CGame::InitKeyboard(LPKEYEVENTHANDLER handler)
 
 void CGame::ProcessKeyboard()
 {
-	HRESULT hr; 
+	HRESULT hr;
 
 	// Collect all key states first
 	hr = didv->GetDeviceState(sizeof(keyStates), keyStates);
@@ -332,8 +335,8 @@ void CGame::ProcessKeyboard()
 		if ((hr == DIERR_INPUTLOST) || (hr == DIERR_NOTACQUIRED))
 		{
 			HRESULT h = didv->Acquire();
-			if (h==DI_OK)
-			{ 
+			if (h == DI_OK)
+			{
 				DebugOut(L"[INFO] Keyboard re-acquired!\n");
 			}
 			else return;
@@ -345,7 +348,7 @@ void CGame::ProcessKeyboard()
 		}
 	}
 
-	keyHandler->KeyState((BYTE *)&keyStates);
+	keyHandler->KeyState((BYTE*)&keyStates);
 
 	// Collect all buffered events
 	DWORD dwElements = KEYBOARD_BUFFER_SIZE;
