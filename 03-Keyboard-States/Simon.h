@@ -22,7 +22,7 @@ class AttackState;
 
 #define SIMON_JUMP_SPEED_Y		0.5f
 
-#define SIMON_GRAVITY			0.002f
+#define SIMON_GRAVITY			0.001f
 
 #define SIMON_STATE_IDLE			0
 #define SIMON_STATE_WALKING_RIGHT	100

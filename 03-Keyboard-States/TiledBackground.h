@@ -10,79 +10,37 @@
 
 class CTiledBackground : public CGameObject {
 private:
-    std::vector<CSprite*> tiles;
+    std::vector<CSprite*> tiles; // Danh sách các sprite tile
     int tileWidth;
     int tileHeight;
-    int numTilesX;  // Số lượng tile theo chiều ngang
-    int numTilesY;  // Số lượng tile theo chiều dọc
-    int mapWidth;   // Số tile theo chiều ngang của map
-    int mapHeight;  // Số tile theo chiều dọc của map
+    int mapWidth; // Chiều rộng bản đồ
+    int mapHeight; // Chiều cao bản đồ
+    int** mapData; // Dữ liệu bản đồ từ JSON
 
 public:
-    CTiledBackground(float x, float y, CSprite* originalSprite, int mapWidth, int mapHeight) : CGameObject(x, y) {
-        this->tileWidth = 32;
-        this->tileHeight = 32;
+    CTiledBackground(float x, float y, vector<int> ids, int** mapData, int tile_size, int mapHeight, int mapWidth) : CGameObject(x, y) {
+        this->tileHeight = tile_size;
+        this->tileWidth = tile_size;
+        this->mapData = mapData;
         this->mapWidth = mapWidth;
         this->mapHeight = mapHeight;
-
-        // Tính số lượng tile từ sprite gốc
-        int spriteWidth = originalSprite->right - originalSprite->left + 1;
-        int spriteHeight = originalSprite->bottom - originalSprite->top + 1;
-        numTilesX = spriteWidth / tileWidth;
-        numTilesY = spriteHeight / tileHeight;
-
-        // Tạo các tile 32x32 từ sprite gốc
-        LPTEXTURE texture = CTextures::GetInstance()->Get(40);
-        int left = originalSprite->left;
-        int top = originalSprite->top;
-
-        for (int y = 0; y < numTilesY; y++) {
-            for (int x = 0; x < numTilesX; x++) {
-                int tileLeft = left + x * tileWidth;
-                int tileTop = top + y * tileHeight;
-                int tileRight = tileLeft + tileWidth - 1;
-                int tileBottom = tileTop + tileHeight - 1;
-
-                // Tạo sprite mới cho tile
-                CSprite* tileSprite = new CSprite(
-                    -1,  // ID tạm thời
-                    tileLeft, tileTop, tileRight, tileBottom,
-                    texture
-                );
-
-                tiles.push_back(tileSprite);
-            }
+        for (int id : ids) {
+            CSprite* sprite = CSprites::GetInstance()->Get(id);
+            tiles.push_back(sprite);
         }
     }
-
-    // Hàm lấy chỉ số tile dựa trên vị trí trong map
-    int GetTileIndex(int mapX, int mapY) {
-        // Áp dụng quy tắc lặp lại (wrap around) nếu cần
-        mapX = mapX % numTilesX;
-        mapY = mapY % numTilesY;
-
-        // Xử lý giá trị âm
-        if (mapX < 0) mapX += numTilesX;
-        if (mapY < 0) mapY += numTilesY;
-
-        return mapY * numTilesX + mapX;
-    }
-
     void Render();
     void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {}
 
     ~CTiledBackground() {
-        // Clean up tile sprites
-        for (auto sprite : tiles) {
-            delete sprite;
-        }
         tiles.clear();
     }
 
-	void GetBoundingBox(float& left, float& top, float& right, float& bottom) {
-		left = x;
-		top = y;
+
+    void GetBoundingBox(float& left, float& top, float& right, float& bottom) {
+        left = x;
+        top = y;
         right = x;
         bottom = y;
-	}
+    }
 };

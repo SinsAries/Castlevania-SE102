@@ -1,15 +1,11 @@
-﻿/* =============================================================
-	INTRODUCTION TO GAME PROGRAMMING SE102
-	
-	SAMPLE 03 - KEYBOARD AND OBJECT STATE
+﻿#include <windows.h>
 
-	This sample illustrates how to:
+#include <iostream>
+#include <fstream>
+#include "json.hpp"
 
-		1/ Process keyboard input
-		2/ Control object state with keyboard events
-================================================================ */
-
-#include <windows.h>
+using json = nlohmann::json;
+using namespace std;
 
 #include "debug.h"
 #include "Game.h"
@@ -69,6 +65,7 @@
 CMario* mario = NULL;
 CWeapon* weapon = NULL;
 CSimon* simon = NULL;
+CSimon* simon2 = NULL;
 
 CTiledBackground* background = NULL;
 
@@ -91,196 +88,122 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+LPCWSTR StringToLPCWSTR(const std::string& str)
+{
+	int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
+	wchar_t* wide_str = new wchar_t[size];
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wide_str, size);
+	return wide_str;
+}
+
 /*
-	Load all game resources 
+	Load all game resources
 	In this example: load textures, sprites, animations and mario object
 */
 void LoadResources()
 {
+	std::ifstream file("./resource/resource.json");
+
+
+	// Kiểm tra xem file có mở thành công không
+	if (!file.is_open()) {
+		std::cout << "Không thể mở file resource.json!" << std::endl;
+		return;
+	}
+
+	json data;
+	file >> data;
+
+	file.close();
+	std::ifstream file2("./resource/Scene1/map.json");
+
+	if (!file2.is_open()) {
+		std::cout << "Không thể mở file map.json!" << std::endl;
+		return;
+	}
+
+	json mapData;
+	file2 >> mapData;
+
+	file2.close();
 	CTextures* textures = CTextures::GetInstance();
 
 	//textures->Add(ID_TEX_MARIO, TEXTURE_PATH_MARIO);
-	textures->Add(ID_TEX_MISC, TEXTURE_PATH_MISC);
-	textures->Add(ID_TEX_SIMON, TEXTURE_PATH_SIMON);
-	textures->Add(ID_TEX_BACKGROUND, TEXTURE_PATH_BACKGROUND);
-
-	CSprites* sprites = CSprites::GetInstance();
-	CAnimations* animations = CAnimations::GetInstance();
-
-	{
-		// Trong LoadResources()
-		LPTEXTURE texBackground = textures->Get(ID_TEX_BACKGROUND); // Hoặc texture riêng cho background
-		sprites->Add(ID_SPRITE_BACKGROUND, 18, 92, 717, 247, texBackground);
-
-		int mapWidth = 20;
-		int mapHeight = 15;
-
-		// Tạo sprite từ sprites đã load
-		CSprite* bgSprite = CSprites::GetInstance()->Get(ID_SPRITE_BACKGROUND);
-
-		// Tạo background object và thêm vào danh sách objects
-		CTiledBackground* background = new CTiledBackground(0, 0, bgSprite, mapWidth, mapHeight);
-		objects.push_back(background);
+	for (int i = 0; i < data["textures"].size(); i++) {
+		textures->Add(data["textures"][i][0], StringToLPCWSTR(data["textures"][i][1].get<string>()));
 	}
-	
+
 	//{
 	//	// Trong LoadResources()
-	//	LPTEXTURE texBackground = textures->Get(ID_TEX_BACKGROUND);
-	//	CSprite* originalBgSprite = new CSprite(ID_SPRITE_BACKGROUND, 18, 92, 717, 247, texBackground);
+	//	LPTEXTURE texBackground = textures->Get(ID_TEX_BACKGROUND); // Hoặc texture riêng cho background
+	//	sprites->Add(ID_SPRITE_BACKGROUND, 18, 92, 717, 247, texBackground);
 
-	//	// Tạo background object với kích thước map (điều chỉnh theo nhu cầu)
-	//	int mapWidth = 20;   // Số lượng tile theo chiều ngang của map
-	//	int mapHeight = 15;  // Số lượng tile theo chiều dọc của map
-	//	CTiledBackground* background = new CTiledBackground(0, 0, originalBgSprite, mapWidth, mapHeight);
+	//	int mapWidth = 20;
+	//	int mapHeight = 15;
+
+	//	// Tạo sprite từ sprites đã load
+	//	CSprite* bgSprite = CSprites::GetInstance()->Get(ID_SPRITE_BACKGROUND);
+
+	//	// Tạo background object và thêm vào danh sách objects
+	//	CTiledBackground* background = new CTiledBackground(0, 0, bgSprite, mapWidth, mapHeight);
 	//	objects.push_back(background);
 	//}
 
+	CSprites* sprites = CSprites::GetInstance();
+	CAnimations* animations = CAnimations::GetInstance();
 	{
-		LPTEXTURE texSimon = textures->Get(ID_TEX_SIMON);
-		
-		// WALK RIGHT
-		sprites->Add(10101, 1519, 21, 1534, 53, texSimon);
-		sprites->Add(10102, 1536, 21, 1551, 53, texSimon);
-		sprites->Add(10103, 1553, 21, 1568, 53, texSimon);
+		// Trong LoadResources()
 
-		// WALK LEFT
-		sprites->Add(10111, 29, 21, 44, 53, texSimon);
-		sprites->Add(10112, 46, 21, 61, 53, texSimon);
-		sprites->Add(10113, 63, 21, 78, 53, texSimon);
+		LPTEXTURE texBackground = textures->Get(ID_TEX_BACKGROUND); // Hoặc texture riêng cho background
+		auto tiles = mapData["tiles"];
+		vector<int> ids;
+		for (int i = 0; i < tiles.size(); i++) {
+			sprites->Add(tiles[i][0], tiles[i][1], tiles[i][2],
+				tiles[i][3], tiles[i][4], texBackground);
+			ids.push_back(tiles[i][0]);
+		}
+		int height = mapData["map"].size(); // số dòng
+		int width = mapData["map"][0].size(); // số cột
 
-		// IDLE RIGHT
-		sprites->Add(10121, 1581, 21, 1596, 53, texSimon);
 
-		// IDLE LEFT
-		sprites->Add(10131, 1, 21, 16, 53, texSimon);
+		// Cấp phát động int** map
+		int** mapArray = new int* [height];
+		for (int i = 0; i < height; i++) {
+			mapArray[i] = new int[width];
+			for (int j = 0; j < width; j++) {
+				mapArray[i][j] = mapData["map"].at(i).at(j).get<int>();
 
-		// JUMP/DUCK RIGHT
-		sprites->Add(10141, 1498, 21, 1513, 46, texSimon);
+			}
+		}
 
-		// JUMP/DUCK LEFT
-		sprites->Add(10151, 84, 21, 99, 46, texSimon);
-
-		// STAND ATTACK RIGHT
-		sprites->Add(10161, 1573, 79, 1596, 108, texSimon);
-		sprites->Add(10162, 1556, 79, 1571, 108, texSimon);
-		sprites->Add(10163, 1531, 79, 1552, 108, texSimon);
-
-		// STAND ATTACK LEFT
-		sprites->Add(10171, 1, 79, 24, 108, texSimon);
-		sprites->Add(10172, 26, 79, 41, 108, texSimon);
-		sprites->Add(10173, 45, 79, 66, 108, texSimon);
-
-		// SIT ATTACK RIGHT
-		sprites->Add(10181, 1427, 79, 1450, 101, texSimon);
-		sprites->Add(10182, 1410, 79, 1425, 101, texSimon);
-		sprites->Add(10183, 1385, 79, 1406, 101, texSimon);
-
-		// SIT ATTACK LEFT
-		sprites->Add(10191, 147, 79, 170, 101, texSimon);
-		sprites->Add(10192, 172, 79, 187, 101, texSimon);
-		sprites->Add(10193, 191, 79, 212, 101, texSimon);
-
-		LPANIMATION ani;
-		
-		ani = new CAnimation(100);
-		ani->Add(10101);
-		ani->Add(10102);
-		ani->Add(10103);
-		animations->Add(ID_ANI_SIMON_WALKING_RIGHT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(10111);
-		ani->Add(10112);
-		ani->Add(10113);
-		animations->Add(ID_ANI_SIMON_WALKING_LEFT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(10121);
-		animations->Add(ID_ANI_SIMON_IDLE_RIGHT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(10131);
-		animations->Add(ID_ANI_SIMON_IDLE_LEFT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(10141);
-		animations->Add(ID_ANI_SIMON_SIT_RIGHT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(10151);
-		animations->Add(ID_ANI_SIMON_SIT_LEFT, ani);
-
-		ani = new CAnimation(300);
-		ani->Add(10161);
-		ani->Add(10162);
-		ani->Add(10163);
-		animations->Add(ID_ANI_SIMON_STAND_ATTACK_RIGHT, ani);
-
-		ani = new CAnimation(300);
-		ani->Add(10171);
-		ani->Add(10172);
-		ani->Add(10173);
-		animations->Add(ID_ANI_SIMON_STAND_ATTACK_LEFT, ani);
-
-		ani = new CAnimation(300);
-		ani->Add(10181);
-		ani->Add(10182);
-		ani->Add(10183);
-		animations->Add(ID_ANI_SIMON_SIT_ATTACK_RIGHT, ani);
-
-		ani = new CAnimation(300);
-		ani->Add(10191);
-		ani->Add(10192);
-		ani->Add(10193);
-		animations->Add(ID_ANI_SIMON_SIT_ATTACK_LEFT, ani);
-
-		simon = new CSimon(SIMON_START_X, SIMON_START_Y);
-		CGame::GetInstance()->InitKeyboard(simon);
-		objects.push_back(simon);
+		CTiledBackground* background = new CTiledBackground(0, 0, ids, mapArray, 32, height, width);
+		objects.push_back(background);
 	}
 
 	{
 		LPTEXTURE texSimon = textures->Get(ID_TEX_SIMON);
-		
-		// WEAPON_LEFT
-		sprites->Add(20101, 1, 485, 8, 508, texSimon);
-		sprites->Add(20102, 10, 482, 26, 500, texSimon);
-		sprites->Add(20103, 27, 485, 51, 493, texSimon);
+		auto tmp = data["sprites"];
+		for (int i = 0; i < tmp.size(); i++)
+		{
+			sprites->Add(tmp[i][0], tmp[i][2], tmp[i][3], tmp[i][4], tmp[i][5], texSimon);
+		}
 
-		// WEAPON_RIGHT
-		sprites->Add(20111, 1588, 485, 1595, 508, texSimon);
-		sprites->Add(20112, 1572, 482, 1586, 500, texSimon);
-		sprites->Add(20113, 1547, 485, 1571, 493, texSimon);
+		tmp = data["animation"];
+		for (int i = 0; i < tmp.size(); i++)
+		{
+			LPANIMATION ani = new CAnimation(tmp[i][1]);
+			for (int j = 0; j < tmp[i][2].size(); j++)
+			{
+				ani->Add(tmp[i][2][j]);
+			}
+			animations->Add(tmp[i][0], ani);
+		}
+		simon = new CSimon(SIMON_START_X, SIMON_START_Y);
+		CGame::GetInstance()->InitKeyboard(simon);
+		objects.push_back(simon);
 
-		// KNIFE_LEFT
-		sprites->Add(20221, 1228, 480, 1243, 488, texSimon);
-
-		// KNIFE_RIGHT
-		sprites->Add(20231, 354, 480, 369, 488, texSimon);
-
-
-		LPANIMATION ani;
-
-		ani = new CAnimation(300);
-		ani->Add(20101);
-		ani->Add(20102);
-		ani->Add(20103);
-		animations->Add(ID_ANI_WEAPON_LEFT, ani);
-		
-		ani = new CAnimation(300);
-		ani->Add(20111);
-		ani->Add(20112);
-		ani->Add(20113);
-		animations->Add(ID_ANI_WEAPON_RIGHT, ani);
-
-
-		ani = new CAnimation(100);
-		ani->Add(20221);
-		animations->Add(ID_ANI_WEAPON_KNIFE_LEFT, ani);
-
-		ani = new CAnimation(100);
-		ani->Add(20231);
-		animations->Add(ID_ANI_WEAPON_KNIFE_RIGHT, ani);
+		simon2 = new CSimon(SIMON_START_X, SIMON_START_Y + 100);
+		objects.push_back(simon2);
 	}
 
 	{
@@ -301,7 +224,7 @@ void LoadResources()
 		}
 		for (int i = 41; i < 100; i++)
 		{
-			CBrick* b = new CBrick(BRICK_X + i * BRICK_WIDTH, BRICK_Y - 20);
+			CBrick* b = new CBrick(BRICK_X + (i - 1)  * BRICK_WIDTH , BRICK_Y + 100);
 			objects.push_back(b);
 		}
 	}
@@ -318,7 +241,7 @@ void Update(DWORD dt)
 
 	for (auto obj : objects)
 		coObjects.push_back(obj);
-	
+
 	for (int i = 0; i < (int)objects.size(); i++)
 	{
 		objects[i]->Update(dt, &coObjects);
@@ -392,7 +315,7 @@ HWND CreateGameWindow(HINSTANCE hInstance, int nCmdShow, int ScreenWidth, int Sc
 			hInstance,
 			NULL);
 
-	if (!hWnd) 
+	if (!hWnd)
 	{
 		OutputDebugString(L"[ERROR] CreateWindow failed");
 		DWORD ErrCode = GetLastError();
@@ -455,7 +378,7 @@ int WINAPI WinMain(
 	CGame* game = CGame::GetInstance();
 	game->Init(hWnd, hInstance);
 
-	
+
 
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 

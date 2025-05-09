@@ -8,25 +8,28 @@ void CTiledBackground::Render()
     int screenWidth = game->GetBackBufferWidth();
     int screenHeight = game->GetBackBufferHeight();
 
-    // Tính toán tile bắt đầu dựa trên vị trí camera
-    int startTileX = (int)(cx / tileWidth);
-    int startTileY = (int)(cy / tileHeight);
+    int startCol = (int)(cx / tileWidth);
+    int endCol = (int)((cx + screenWidth) / tileWidth) + 2;
+    int startRow = (int)(cy / tileHeight);
+    int endRow = (int)((cy + screenHeight) / tileHeight) + 2;
 
-    // Tính số lượng tile cần để phủ màn hình
-    int tilesNeededX = (screenWidth / tileWidth) + 2; // +2 để đảm bảo không có khoảng trống
-    int tilesNeededY = (screenHeight / tileHeight) + 2;
+    for (int row = startRow; row <= endRow; ++row)
+    {
+        for (int col = startCol; col <= endCol; ++col)
+        {
+            // Kiểm tra index hợp lệ
+            int col2 = col, row2 = row;
+            if (col >= mapWidth) col2 = col % mapWidth;
+            if (row >= mapHeight) row2 = row % mapHeight;
+            if (col < 0) col2 = col % mapWidth + mapWidth;
+            if (row < 0) row2 = row % mapHeight + mapHeight;
 
-    // Vẽ các tile cần thiết
-    for (int y = 0; y < tilesNeededY; y++) {
-        for (int x = 0; x < tilesNeededX; x++) {
-            // Vị trí thực tế trong thế giới game
-            float worldPosX = (startTileX + x) * tileWidth;
-            float worldPosY = (startTileY + y) * tileHeight;
 
-            // Chọn sprite tile phù hợp từ danh sách tiles
-            int tileIndex = GetTileIndex(startTileX + x, startTileY + y);
-            if (tileIndex >= 0 && tileIndex < (int)tiles.size())
-                tiles[tileIndex]->Draw(worldPosX, worldPosY);
+            int tileIndex = mapData[row2][col2];
+            float xPos = x + col * tileWidth;
+            float yPos = y + row * tileHeight;
+            tiles[tileIndex]->Draw(xPos, yPos);
+
         }
     }
 }

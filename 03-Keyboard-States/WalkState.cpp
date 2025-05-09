@@ -15,7 +15,6 @@ void WalkState::Enter(CSimon* simon)
 {
 	simon->vx = nx > 0 ? SIMON_WALKING_SPEED : -SIMON_WALKING_SPEED;
 	simon->isSitting = false;
-	//DebugOut(L"Cuong ngu nhu con cu: %f\n", simon->vx);
 }
 
 void WalkState::HandleInput(CSimon* simon, BYTE* states)
