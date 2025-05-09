@@ -46,7 +46,15 @@ public:
     CGameObject(float x, float y) :CGameObject() { this->x = x; this->y = y; }
     CGameObject(float x, float y, int nx) :CGameObject(x, y) { this->nx = nx; }
 
-    virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom) = 0;
+    virtual float GetWidth() const = 0;
+    virtual float GetHeight() const = 0;
+
+    virtual void GetBoundingBox(float& l, float& t, float& r, float& b) const {
+        l = x;
+        t = y;
+        r = x + GetWidth();
+        b = y + GetHeight();
+    }
     virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL) = 0;
     virtual void Render() = 0;
     ~CGameObject();

@@ -30,7 +30,6 @@ public:
     virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) = 0;
     virtual void Render() = 0;
     virtual void UpdatePosition(float simon_x, float simon_y, int aniId, int frame, DWORD dt) = 0;
-
     bool IsActive() const { return isActive; }
     void SetInactive() { isActive = false; }
 };

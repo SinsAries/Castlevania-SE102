@@ -3,7 +3,11 @@
         [0, "textures/mario.png"],
         [20, "textures/misc.png"],
         [30, "textures/simon.png"],
-        [40, "resource/Scene1/tileset.png"]
+        [40, "resource/Scene1/tileset.png"],
+	    [50, "resource/Scene1/Brick.png"]
+    ],
+    "items": [
+        [20001, 50, 0, 0, 15, 15, "BRICK"]
     ],
     "sprites": [
         [10101, 30, 1519, 21, 1534, 53, "WALK RIGHT"],

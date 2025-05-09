@@ -44,9 +44,7 @@ void JumpState::HandleInput(CSimon* simon, BYTE* states)
 void JumpState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	simon->vy += SIMON_GRAVITY * dt;
-
 	CCollision::GetInstance()->Process(simon, dt, coObjects);
-
 	simon->y += simon->vy * dt;
 
 	CGame* game = CGame::GetInstance();

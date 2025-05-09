@@ -108,7 +108,7 @@
     <ClCompile Include="Quadtree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Desktop\UIT\Nhập môn phát triển game - SE102.P22\Castlevania-SE102\Castlevania-SE102\clone\03-Keyboard-States\Collision.cpp">
+    <ClCompile Include="Collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

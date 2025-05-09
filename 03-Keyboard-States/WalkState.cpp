@@ -90,9 +90,9 @@ void WalkState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	CCollision::GetInstance()->Process(simon, dt, coObjects);
 
-	simon->y += simon->vy * dt;
+	//simon->y += simon->vy * dt;
 
-	simon->x += simon->vx * dt;
+	//simon->x += simon->vx * dt;
 
 	if (simon->isOnPlatform)
 	{

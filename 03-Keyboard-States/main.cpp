@@ -42,15 +42,12 @@ using namespace std;
 #define ID_TEX_MISC 20
 #define ID_TEX_SIMON 30
 #define ID_TEX_BACKGROUND 40
+#define ID_TEX_BRICK 50
 
 #define ID_SPRITE_BRICK 20001
 #define ID_SPRITE_BACKGROUND 20002
 
 #define TEXTURES_DIR L"textures"
-#define TEXTURE_PATH_MARIO TEXTURES_DIR "\\mario.png"
-#define TEXTURE_PATH_MISC TEXTURES_DIR "\\misc.png"
-#define TEXTURE_PATH_SIMON TEXTURES_DIR "\\simon.png"
-#define TEXTURE_PATH_BACKGROUND TEXTURES_DIR "\\background.png"
 
 #define MARIO_START_X 200.0f
 #define MARIO_START_Y 10.0f
@@ -133,21 +130,6 @@ void LoadResources()
 		textures->Add(data["textures"][i][0], StringToLPCWSTR(data["textures"][i][1].get<string>()));
 	}
 
-	//{
-	//	// Trong LoadResources()
-	//	LPTEXTURE texBackground = textures->Get(ID_TEX_BACKGROUND); // Hoặc texture riêng cho background
-	//	sprites->Add(ID_SPRITE_BACKGROUND, 18, 92, 717, 247, texBackground);
-
-	//	int mapWidth = 20;
-	//	int mapHeight = 15;
-
-	//	// Tạo sprite từ sprites đã load
-	//	CSprite* bgSprite = CSprites::GetInstance()->Get(ID_SPRITE_BACKGROUND);
-
-	//	// Tạo background object và thêm vào danh sách objects
-	//	CTiledBackground* background = new CTiledBackground(0, 0, bgSprite, mapWidth, mapHeight);
-	//	objects.push_back(background);
-	//}
 
 	CSprites* sprites = CSprites::GetInstance();
 	CAnimations* animations = CAnimations::GetInstance();
@@ -201,31 +183,49 @@ void LoadResources()
 		simon = new CSimon(SIMON_START_X, SIMON_START_Y);
 		CGame::GetInstance()->InitKeyboard(simon);
 		objects.push_back(simon);
-
-		simon2 = new CSimon(SIMON_START_X, SIMON_START_Y + 100);
-		objects.push_back(simon2);
 	}
 
 	{
-		// Brick objects 
-		LPTEXTURE texMisc = textures->Get(ID_TEX_MISC);
-		sprites->Add(ID_SPRITE_BRICK, 372, 153, 372 + 15, 153 + 15, texMisc);
+		// Load objects
+		auto items = data["items"]; 
+		for (int i = 0; i < items.size(); i++)
+		{
+			LPTEXTURE texItem = textures->Get(items[i][1]);
+			sprites->Add(items[i][0], items[i][2], items[i][3], items[i][4], items[i][5], texItem);
+		}
 
+		// Add brick
 		LPANIMATION ani;
-
 		ani = new CAnimation(100);
 		ani->Add(ID_SPRITE_BRICK);
 		animations->Add(ID_ANI_BRICK, ani);
 
-		for (int i = 0; i < 40; i++)
+		/*for (int i = 0; i < 40; i++)
 		{
-			CBrick* b = new CBrick(BRICK_X + i * BRICK_WIDTH, BRICK_Y);
+			CBrick* b = new CBrick(BRICK_X + i * BRICK_WIDTH, BRICK_Y - 50);
 			objects.push_back(b);
 		}
 		for (int i = 41; i < 100; i++)
 		{
-			CBrick* b = new CBrick(BRICK_X + (i - 1)  * BRICK_WIDTH , BRICK_Y + 100);
+			CBrick* b = new CBrick(BRICK_X + (i - 1) * BRICK_WIDTH, BRICK_Y + 100);
 			objects.push_back(b);
+		}*/
+
+		auto bricksMap = mapData["brick"];
+		for (int i = 0; i < bricksMap.size(); i++)
+		{
+			float x1 = bricksMap[i][0], x2 = bricksMap[i][2];
+			float y1 = bricksMap[i][1], y2 = bricksMap[i][3];
+			float brickWidth = bricksMap[i][4];
+			float brickHeight = bricksMap[i][5];
+			for (int i = x1; i <= x2; i += brickWidth)
+			{
+				for (int j = y1; j <= y2; j += brickHeight)
+				{
+					CBrick* brick = new CBrick(i, j);
+					objects.push_back(brick);
+				}
+			}
 		}
 	}
 }

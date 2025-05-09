@@ -20,7 +20,7 @@ class AttackState;
 
 #define SIMON_WALKING_SPEED		0.1f
 
-#define SIMON_JUMP_SPEED_Y		0.5f
+#define SIMON_JUMP_SPEED_Y		0.3f
 
 #define SIMON_GRAVITY			0.001f
 
@@ -87,11 +87,12 @@ public:
 	void KeyState(BYTE* states);
 	virtual void OnKeyDown(int KeyCode);
 	virtual void OnKeyUp(int KeyCode);
-	void GetBoundingBox(float& left, float& top, float& right, float& bottom) override;
 	void OnCollisionWith(LPCOLLISIONEVENT e) override;
 	int IsCollidable()
 	{
 		return 1;
 	}
+	float GetWidth() const override { return SIMON_BBOX_WIDTH; }
+	float GetHeight() const override { return SIMON_BBOX_HEIGHT; }
 };
 

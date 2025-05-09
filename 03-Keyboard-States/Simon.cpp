@@ -51,13 +51,6 @@ void CSimon::OnKeyUp(int KeyCode)
 	DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
 }
 
-void CSimon::GetBoundingBox(float& left, float& top, float& right, float& bottom) {
-	// Implementation of GetBoundingBox method
-	left = x;
-	top = y;
-	right = x + SIMON_BBOX_WIDTH;
-	bottom = y + SIMON_BBOX_HEIGHT;
-}
 
 void CSimon::OnCollisionWith(LPCOLLISIONEVENT e)
 {

@@ -17,10 +17,6 @@ public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) override;
 	void UpdatePosition(float simon_x, float simon_y, int aniId, int frame, DWORD dt) override;
 	void Render() override;
-	void GetBoundingBox(float& left, float& top, float& right, float& bottom) {
-		left = x;
-		top = y;
-		right = x;
-		bottom = y;
-	}
+	float GetWidth() const override { return 0; }
+	float GetHeight() const override { return 0; }
 };

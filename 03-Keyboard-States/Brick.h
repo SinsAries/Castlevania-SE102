@@ -14,10 +14,6 @@ public:
     CBrick(float x, float y) : CGameObject(x, y) {}
     void Render();
     void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {}
-    void GetBoundingBox(float& l, float& t, float& r, float& b) {
-        l = x;
-        t = y;
-        r = x + BRICK_BBOX_WIDTH;
-        b = y + BRICK_BBOX_HEIGHT;
-    }
+    float GetWidth() const override { return BRICK_BBOX_WIDTH; }
+    float GetHeight() const override { return BRICK_BBOX_HEIGHT; }
 };
