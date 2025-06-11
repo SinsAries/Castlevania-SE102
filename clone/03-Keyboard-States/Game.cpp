@@ -371,6 +371,25 @@ void CGame::ProcessKeyboard()
 	}
 }
 
+void CGame::AddScene(LPSCENE scene)
+{
+	scenes[scene->GetSceneId()] = scene;
+}
+
+void CGame::SwitchScene(int scene_id)
+{
+	if (scenes.find(current_scene_id) != scenes.end() && scenes[current_scene_id] != nullptr)
+		scenes[current_scene_id]->Unload();
+
+	current_scene_id = scene_id;
+	LPSCENE s = scenes[current_scene_id];
+
+	// ĐÚNG THỨ TỰ: Phải Load() trước để tạo ra player và key_handler
+	s->Load();
+
+	// Sau khi Load xong, key_handler của scene đã hợp lệ, bây giờ mới InitKeyboard
+	this->InitKeyboard(s->GetKeyEventHandler());
+}
 
 CGame::~CGame()
 {

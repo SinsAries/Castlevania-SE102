@@ -13,22 +13,43 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Simon">
-      <UniqueIdentifier>{4ec7d385-4ae1-4cce-8a3a-c3335c2b7dc0}</UniqueIdentifier>
+    <Filter Include="Header Files\InfoBoard">
+      <UniqueIdentifier>{16ac40d6-dff8-429c-b594-d2b290a013d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Simon\SimonStates">
-      <UniqueIdentifier>{e1293106-dfca-406d-b4ca-fe09173967c4}</UniqueIdentifier>
+    <Filter Include="Source Files\InfoBoard">
+      <UniqueIdentifier>{8719d629-ed9e-4fd7-b175-fb1d3576c2d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Simon">
+    <Filter Include="Resource Files\json">
+      <UniqueIdentifier>{630c8a37-d5b7-45f1-a1f8-eb0b0711ab67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Animation">
+      <UniqueIdentifier>{c6baae1b-80bd-45b8-b320-9a4123c2586e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation">
+      <UniqueIdentifier>{53c7ee76-28a5-4b02-9eb8-6bf1f355dfee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects">
+      <UniqueIdentifier>{03c42732-c331-4081-bd9f-4928051d9ca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects\Simon">
       <UniqueIdentifier>{b743698a-e0b3-44e8-bbac-1a9954f023e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Simon\SimonStates">
+    <Filter Include="Source Files\GameObjects\Simon\SimonStates">
       <UniqueIdentifier>{c4f84dc5-98dd-46ba-90ca-1e66ace2d5e9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Weapon">
+    <Filter Include="Source Files\GameObjects\Weapon">
       <UniqueIdentifier>{bea9782a-baab-45a5-8418-f463b563403e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Weapon">
+    <Filter Include="Header Files\GameObject">
+      <UniqueIdentifier>{661c04c8-fcf0-401e-aa08-1ca2949534e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObject\Simon">
+      <UniqueIdentifier>{4ec7d385-4ae1-4cce-8a3a-c3335c2b7dc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObject\Simon\SimonStates">
+      <UniqueIdentifier>{e1293106-dfca-406d-b4ca-fe09173967c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObject\Weapon">
       <UniqueIdentifier>{02d9fc8c-7dc8-44dd-afa5-d295396fee24}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -39,73 +60,76 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sprites.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Textures.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mario.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SampleKeyEventHandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Animations.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sprite.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Brick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TiledBackground.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimonState.cpp">
-      <Filter>Source Files\Simon\SimonStates</Filter>
+      <Filter>Source Files\GameObjects\Simon\SimonStates</Filter>
     </ClCompile>
     <ClCompile Include="IdleState.cpp">
-      <Filter>Source Files\Simon\SimonStates</Filter>
+      <Filter>Source Files\GameObjects\Simon\SimonStates</Filter>
     </ClCompile>
     <ClCompile Include="WalkState.cpp">
-      <Filter>Source Files\Simon\SimonStates</Filter>
+      <Filter>Source Files\GameObjects\Simon\SimonStates</Filter>
     </ClCompile>
     <ClCompile Include="AttackState.cpp">
-      <Filter>Source Files\Simon\SimonStates</Filter>
+      <Filter>Source Files\GameObjects\Simon\SimonStates</Filter>
     </ClCompile>
     <ClCompile Include="JumpState.cpp">
-      <Filter>Source Files\Simon\SimonStates</Filter>
+      <Filter>Source Files\GameObjects\Simon\SimonStates</Filter>
     </ClCompile>
     <ClCompile Include="SitState.cpp">
-      <Filter>Source Files\Simon\SimonStates</Filter>
+      <Filter>Source Files\GameObjects\Simon\SimonStates</Filter>
     </ClCompile>
     <ClCompile Include="Simon.cpp">
-      <Filter>Source Files\Simon</Filter>
+      <Filter>Source Files\GameObjects\Simon</Filter>
     </ClCompile>
     <ClCompile Include="Weapon.cpp">
-      <Filter>Source Files\Weapon</Filter>
+      <Filter>Source Files\GameObjects\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Whip.cpp">
-      <Filter>Source Files\Weapon</Filter>
+      <Filter>Source Files\GameObjects\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Knife.cpp">
-      <Filter>Source Files\Weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GameObjects\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Quadtree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="infoBoard.cpp">
+      <Filter>Source Files\InfoBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="font.cpp">
+      <Filter>Source Files\InfoBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animations.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprites.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Textures.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Brick.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -116,84 +140,105 @@
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprites.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Textures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mario.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="KeyEventHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationFrame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Animations.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SampleKeyEventHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Brick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TiledBackground.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimonState.h">
-      <Filter>Header Files\Simon\SimonStates</Filter>
+      <Filter>Header Files\GameObject\Simon\SimonStates</Filter>
     </ClInclude>
     <ClInclude Include="IdleState.h">
-      <Filter>Header Files\Simon\SimonStates</Filter>
+      <Filter>Header Files\GameObject\Simon\SimonStates</Filter>
     </ClInclude>
     <ClInclude Include="AttackState.h">
-      <Filter>Header Files\Simon\SimonStates</Filter>
+      <Filter>Header Files\GameObject\Simon\SimonStates</Filter>
     </ClInclude>
     <ClInclude Include="JumpState.h">
-      <Filter>Header Files\Simon\SimonStates</Filter>
+      <Filter>Header Files\GameObject\Simon\SimonStates</Filter>
     </ClInclude>
     <ClInclude Include="WalkState.h">
-      <Filter>Header Files\Simon\SimonStates</Filter>
+      <Filter>Header Files\GameObject\Simon\SimonStates</Filter>
     </ClInclude>
     <ClInclude Include="SitState.h">
-      <Filter>Header Files\Simon\SimonStates</Filter>
+      <Filter>Header Files\GameObject\Simon\SimonStates</Filter>
     </ClInclude>
     <ClInclude Include="Simon.h">
-      <Filter>Header Files\Simon</Filter>
+      <Filter>Header Files\GameObject\Simon</Filter>
     </ClInclude>
     <ClInclude Include="Weapon.h">
-      <Filter>Header Files\Weapon</Filter>
+      <Filter>Header Files\GameObject\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Whip.h">
-      <Filter>Header Files\Weapon</Filter>
+      <Filter>Header Files\GameObject\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Knife.h">
-      <Filter>Header Files\Weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GameObject\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Quadtree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="infoBoard.h">
+      <Filter>Header Files\InfoBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="font.h">
+      <Filter>Header Files\InfoBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameIDs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationFrame.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animations.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprites.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Textures.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Brick.h">
+      <Filter>Header Files\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="textures.json">
+      <Filter>Resource Files\json</Filter>
+    </None>
+    <None Include="assets.json">
+      <Filter>Resource Files\json</Filter>
+    </None>
+    <None Include="scene_main.json">
+      <Filter>Resource Files\json</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\misc.png">
@@ -208,5 +253,16 @@
     <Image Include="textures\background.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="textures\font.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\pureblack.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="03-Keyboard-States.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

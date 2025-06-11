@@ -1,0 +1,22 @@
+[
+  {
+    "id": "SIMON",
+    "path": "textures\\simon.png"
+  },
+  {
+    "id": "MISC",
+    "path": "textures\\misc.png"
+  },
+  {
+    "id": "BACKGROUND",
+    "path": "textures\\background.png"
+  },
+  {
+    "id": "FONT",
+    "path": "textures\\font.png"
+  },
+  {
+    "id": "BLACK",
+    "path": "textures\\pureblack.png"
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "textures_file": "textures.json",
+  "assets_file": "assets.json",
+  "objects": [
+    {
+      "type": "Background",
+      "properties": {
+        "spriteId": "background_main",
+        "mapWidth": 20,
+        "mapHeight": 15
+      }
+    },
+    {
+      "type": "Simon",
+      "position": {
+        "x": 200.0,
+        "y": 10.0
+      }
+    },
+    {
+      "type": "Bricks",
+      "properties": {
+        "startX": 0.0,
+        "startY": 180.0,
+        "count": 40,
+        "cellWidth": 16.0
+      }
+    }
+  ]
+}

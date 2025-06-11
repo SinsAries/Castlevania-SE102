@@ -9,6 +9,8 @@
 #include "Texture.h"
 #include "KeyEventHandler.h"
 #include "Camera.h"
+#include "Scene.h"
+#include <map>
 
 #define MAX_FRAME_RATE 60
 #define KEYBOARD_BUFFER_SIZE 1024
@@ -43,6 +45,9 @@ class CGame
 	Camera* camera;
 
 	HINSTANCE hInstance;
+
+	std::map<int, LPSCENE> scenes;
+	int current_scene_id;
 
 public:
 	// Init DirectX, Sprite Handler
@@ -86,6 +91,10 @@ public:
 
 	void SetCamera(Camera* cam) { this->camera = cam; }
 	Camera* GetCamera() { return this->camera; }
+
+	void AddScene(LPSCENE scene);
+	LPSCENE GetCurrentScene() { return scenes[current_scene_id]; }
+	void SwitchScene(int scene_id);
 
 	~CGame();
 };

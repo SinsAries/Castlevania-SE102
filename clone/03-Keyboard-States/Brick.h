@@ -3,12 +3,16 @@
 #include "GameObject.h"
 #include "Animation.h"
 #include "Animations.h"
-
-#define ID_ANI_BRICK 10000
-#define BRICK_WIDTH 16
+#include "GameIDs.h"
 
 class CBrick : public CGameObject {
 public:
+	// === GAMEPLAY CONSTANTS ===
+	static constexpr int BRICK_WIDTH = 16;
+	static constexpr float BRICK_X = 0.0f;
+	static constexpr float BRICK_Y = 180.0f;
+
+	// === METHODS ===
 	CBrick(float x, float y) : CGameObject(x, y) {}
 	void Render();
 	void Update(DWORD dt) {}

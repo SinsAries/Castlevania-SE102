@@ -1,0 +1,241 @@
+﻿#include <fstream>
+#include "nlohmann/json.hpp"
+
+#include "PlayScene.h"
+#include "Game.h"
+#include "debug.h"
+#include "Textures.h"
+#include "Sprites.h"
+#include "Animations.h"
+#include "Brick.h"
+#include "KeyEventHandler.h"
+#include "infoBoard.h"
+
+using json = nlohmann::json;
+
+extern std::wstring s2ws(const std::string& s);
+
+
+CPlayScene::CPlayScene(int id, std::string filePath) : CScene(id)
+{
+	this->sceneFilePath = filePath;
+	this->player = nullptr;
+	this->background = nullptr;
+	this->quadtree = nullptr;
+	this->key_handler = nullptr;
+	this->board = nullptr;
+
+	this->score = 0;
+	this->game_time = 400;
+	this->stage_number = 1;
+}
+
+void CPlayScene::Load()
+{
+	DebugOut(L"[INFO] Start loading scene from: %hs \n", sceneFilePath.c_str());
+
+	CTextures* textures = CTextures::GetInstance();
+	CSprites* sprites = CSprites::GetInstance();
+	CAnimations* animations = CAnimations::GetInstance();
+
+	std::ifstream f(sceneFilePath);
+	if (!f) {
+		DebugOut(L"[ERROR] Failed to open scene file: %hs\n", sceneFilePath.c_str());
+		return;
+	}
+	json data = json::parse(f);
+
+	std::string textures_path = data["textures_file"];
+	std::string assets_path = data["assets_file"];
+
+	// === 1. LOAD TEXTURES ===
+	DebugOut(L"[INFO] Loading textures from %hs\n", textures_path.c_str());
+	std::map<std::string, TextureID> textureIdMap = {
+		{"SIMON", TextureID::SIMON}, {"MISC", TextureID::MISC},
+		{"BACKGROUND", TextureID::BACKGROUND}, {"FONT", TextureID::FONT}
+	};
+	try {
+		std::ifstream f_textures(textures_path);
+		json data_textures = json::parse(f_textures);
+		for (const auto& texData : data_textures) {
+			textures->Add(static_cast<int>(textureIdMap[texData["id"]]), s2ws(texData["path"]).c_str());
+		}
+	}
+	catch (json::parse_error& e) {
+		DebugOut(L"[ERROR] JSON parse error in %hs: %hs\n", textures_path.c_str(), e.what());
+		return;
+	}
+
+	// === 2. LOAD ASSETS (SPRITES & ANIMATIONS) ===
+	DebugOut(L"[INFO] Loading assets from %hs\n", assets_path.c_str());
+	std::map<std::string, int> sprite_registry_for_animation;
+	try
+	{
+		std::ifstream f_assets(assets_path);
+		json data_assets = json::parse(f_assets);
+
+		static std::map<std::string, int> masterSpriteIdMap;
+		if (masterSpriteIdMap.empty()) {
+			masterSpriteIdMap["ui_black"] = static_cast<int>(SpriteID::UI_Black_Background);
+			masterSpriteIdMap["ui_health_red"] = static_cast<int>(SpriteID::UI_Health_Red);
+			masterSpriteIdMap["ui_health_white"] = static_cast<int>(SpriteID::UI_Health_White);
+			masterSpriteIdMap["ui_heart"] = static_cast<int>(SpriteID::UI_Heart);
+			for (int i = 0; i < 26; i++) masterSpriteIdMap["font_" + std::string(1, 'A' + i)] = static_cast<int>(SpriteID::Font_A) + i;
+			for (int i = 0; i < 10; i++) masterSpriteIdMap["font_" + std::string(1, '0' + i)] = static_cast<int>(SpriteID::Font_0) + i;
+			masterSpriteIdMap["font_symbol_-"] = static_cast<int>(SpriteID::Font_Symbol_Dash);
+		}
+
+		for (auto& sprite_element : data_assets["sprites"].items()) {
+			std::string spriteIdStr = sprite_element.key();
+			json spriteData = sprite_element.value();
+
+			int sprite_id_int;
+			if (masterSpriteIdMap.count(spriteIdStr)) {
+				sprite_id_int = masterSpriteIdMap[spriteIdStr];
+			}
+			else {
+				static int dynamic_id = 7000;
+				sprite_id_int = dynamic_id++;
+			}
+
+			std::string texIdStr = spriteData["textureId"];
+			LPTEXTURE tex = textures->Get(static_cast<int>(textureIdMap[texIdStr]));
+			json rect = spriteData["rect"];
+			sprites->Add(sprite_id_int, rect[0].get<int>(), rect[1].get<int>(), rect[2].get<int>(), rect[3].get<int>(), tex);
+
+			sprite_registry_for_animation[spriteIdStr] = sprite_id_int;
+		}
+
+		std::map<std::string, AnimationID> animationIdMap = {
+			{"SimonWalkRight", AnimationID::SimonWalkRight}, {"SimonWalkLeft", AnimationID::SimonWalkLeft},
+			{"SimonIdleRight", AnimationID::SimonIdleRight}, {"SimonIdleLeft", AnimationID::SimonIdleLeft},
+			{"SimonSitRight", AnimationID::SimonSitRight}, {"SimonSitLeft", AnimationID::SimonSitLeft},
+			{"SimonStandAttackRight", AnimationID::SimonStandAttackRight}, {"SimonStandAttackLeft", AnimationID::SimonStandAttackLeft},
+			{"SimonSitAttackRight", AnimationID::SimonSitAttackRight}, {"SimonSitAttackLeft", AnimationID::SimonSitAttackLeft},
+			{"WeaponWhipLeft", AnimationID::WeaponWhipLeft}, {"WeaponWhipRight", AnimationID::WeaponWhipRight},
+			{"WeaponKnifeLeft", AnimationID::WeaponKnifeLeft}, {"WeaponKnifeRight", AnimationID::WeaponKnifeRight},
+			{"Brick", AnimationID::Brick}
+		};
+		for (auto& anim_element : data_assets["animations"].items()) {
+			std::string animIdStr = anim_element.key();
+			json animData = anim_element.value();
+			int frameTime = animData["defaultFrameTime"];
+			LPANIMATION ani = new CAnimation(frameTime);
+			for (const auto& spriteIdJson : animData["spriteIds"]) {
+				std::string spriteIdStr = spriteIdJson.get<std::string>();
+				ani->Add(sprite_registry_for_animation[spriteIdStr]);
+			}
+			animations->Add(static_cast<int>(animationIdMap[animIdStr]), ani);
+		}
+	}
+	catch (json::parse_error& e) {
+		DebugOut(L"[ERROR] JSON parse error in %hs: %hs\n", assets_path.c_str(), e.what());
+		return;
+	}
+
+	// === 3. LOAD SCENE OBJECTS ===
+	DebugOut(L"[INFO] Loading scene objects...\n");
+	this->quadtree = new Quad(0, Point(0, 0), Point(1000, 1000));
+	for (const auto& objData : data["objects"])
+	{
+		std::string type = objData["type"];
+		if (type == "Simon") {
+			auto pos = objData["position"];
+			this->player = new CSimon(pos["x"], pos["y"]);
+			this->objects.push_back(this->player);
+			this->key_handler = this->player;
+		}
+		else if (type == "Bricks") {
+			auto props = objData["properties"];
+			for (int i = 0; i < props["count"]; i++) {
+				CBrick* b = new CBrick(props["startX"].get<float>() + i * props["cellWidth"].get<float>(), props["startY"]);
+				this->quadtree->insert(b);
+			}
+		}
+		else if (type == "Background") {
+			auto props = objData["properties"];
+			std::string spriteIdStr = props["spriteId"];
+			CSprite* bgSprite = sprites->Get(sprite_registry_for_animation[spriteIdStr]);
+			this->background = new CTiledBackground(0, 0, bgSprite, props["mapWidth"], props["mapHeight"]);
+			this->objects.push_back(this->background);
+		}
+	}
+
+	board = new CInfoBoard();
+
+	DebugOut(L"[INFO] Scene loaded successfully.\n");
+}
+
+void CPlayScene::Update(DWORD dt)
+{
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		objects[i]->Update(dt);
+	}
+
+	if (player) {
+		float cx, cy;
+		player->GetPosition(cx, cy);
+		CGame::GetInstance()->GetCamera()->FollowSimon(cx, cy);
+	}
+
+	if (player && board)
+	{
+		// Tạm thời dùng giá trị giả định, bạn sẽ cần các hàm Get... từ Simon
+		board->Update(this->score, this->game_time, this->stage_number, 16, 16, 3);
+	}
+}
+
+void CPlayScene::Render()
+{
+	CGame* g = CGame::GetInstance();
+	ID3D10Device* pD3DDevice = g->GetDirect3DDevice();
+	IDXGISwapChain* pSwapChain = g->GetSwapChain();
+	ID3D10RenderTargetView* pRenderTargetView = g->GetRenderTargetView();
+	ID3DX10Sprite* spriteHandler = g->GetSpriteHandler();
+
+	pD3DDevice->ClearRenderTargetView(pRenderTargetView, BACKGROUND_COLOR);
+
+	spriteHandler->Begin(D3DX10_SPRITE_SORT_TEXTURE);
+	FLOAT NewBlendFactor[4] = { 0,0,0,0 };
+	pD3DDevice->OMSetBlendState(g->GetAlphaBlending(), NewBlendFactor, 0xffffffff);
+
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		objects[i]->Render();
+	}
+
+	if (quadtree) {
+		quadtree->Render();
+	}
+
+	if (board)
+		board->Render();
+
+	spriteHandler->End();
+	pSwapChain->Present(0, 0);
+}
+
+void CPlayScene::Unload()
+{
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		delete objects[i];
+	}
+	objects.clear();
+
+	if (quadtree) {
+		delete quadtree;
+		quadtree = nullptr;
+	}
+
+	if (board) {
+		delete board;
+		board = nullptr;
+	}
+
+	player = nullptr;
+	background = nullptr;
+
+	DebugOut(L"[INFO] Scene unloaded.\n");
+}

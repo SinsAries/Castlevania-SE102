@@ -82,6 +82,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d10.lib;dxguid.lib;dinput8.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -92,6 +94,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d10.lib;dxguid.lib;dinput8.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -104,6 +108,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -118,6 +124,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)packages;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -132,15 +140,16 @@
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="debug.cpp" />
+    <ClCompile Include="font.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="IdleState.cpp" />
+    <ClCompile Include="infoBoard.cpp" />
     <ClCompile Include="JumpState.cpp" />
     <ClCompile Include="Knife.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mario.cpp" />
+    <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Quadtree.cpp" />
-    <ClCompile Include="SampleKeyEventHandler.cpp" />
     <ClCompile Include="Simon.cpp" />
     <ClCompile Include="SimonState.cpp" />
     <ClCompile Include="SitState.cpp" />
@@ -159,16 +168,20 @@
     <ClInclude Include="AttackState.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="font.h" />
+    <ClInclude Include="GameIDs.h" />
     <ClInclude Include="IdleState.h" />
+    <ClInclude Include="infoBoard.h" />
     <ClInclude Include="JumpState.h" />
     <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Knife.h" />
-    <ClInclude Include="Mario.h" />
     <ClInclude Include="debug.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Quadtree.h" />
-    <ClInclude Include="SampleKeyEventHandler.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Simon.h" />
     <ClInclude Include="SimonState.h" />
     <ClInclude Include="SitState.h" />
@@ -182,13 +195,21 @@
     <ClInclude Include="Whip.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets.json" />
     <None Include="packages.config" />
+    <None Include="scene_main.json" />
+    <None Include="textures.json" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\background.png" />
+    <Image Include="textures\font.png" />
     <Image Include="textures\mario.png" />
     <Image Include="textures\misc.png" />
+    <Image Include="textures\pureblack.png" />
     <Image Include="textures\simon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="03-Keyboard-States.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -12,22 +12,22 @@ void CWhip::UpdatePosition(float simon_x, float simon_y, int aniId, int frame, D
 	// Cập nhật vị trí whip theo animation và frame hiện tại
 	switch (aniId)
 	{
-	case ID_ANI_SIMON_STAND_ATTACK_RIGHT:
+	case static_cast<int>(AnimationID::SimonStandAttackRight):
 		dx[0] = -15; dy[0] = 4;
 		dx[1] = -7; dy[1] = 1;
 		dx[2] = 20; dy[2] = -5;
 		break;
-	case ID_ANI_SIMON_STAND_ATTACK_LEFT:
+	case static_cast<int>(AnimationID::SimonStandAttackLeft):
 		dx[0] = 12; dy[0] = 4;
 		dx[1] = 7; dy[1] = 1;
 		dx[2] = -20; dy[2] = -5;
 		break;
-	case ID_ANI_SIMON_SIT_ATTACK_RIGHT:
+	case static_cast<int>(AnimationID::SimonSitAttackRight):
 		dx[0] = -15; dy[0] = 6;
 		dx[1] = -5; dy[1] = 5;
 		dx[2] = 23; dy[2] = -2;
 		break;
-	case ID_ANI_SIMON_SIT_ATTACK_LEFT:
+	case static_cast<int>(AnimationID::SimonSitAttackLeft):
 		dx[0] = 13; dy[0] = 6;
 		dx[1] = 5; dy[1] = 5;
 		dx[2] = -22; dy[2] = -2;
@@ -46,6 +46,6 @@ void CWhip::UpdatePosition(float simon_x, float simon_y, int aniId, int frame, D
 
 void CWhip::Render()
 {
-	int aniId = nx > 0 ? ID_ANI_WEAPON_RIGHT : ID_ANI_WEAPON_LEFT;
+	int aniId = nx > 0 ? static_cast<int>(AnimationID::WeaponWhipRight) : static_cast<int>(AnimationID::WeaponWhipLeft);
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 }

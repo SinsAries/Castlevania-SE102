@@ -1,4 +1,5 @@
-#include "IdleState.h"
+﻿#include "IdleState.h"
+#include "Simon.h"
 #include "Game.h"
 #include "Animations.h"
 #include "WalkState.h"
@@ -13,7 +14,8 @@ WalkState::WalkState(CSimon* simon, int direction) {
 
 void WalkState::Enter(CSimon* simon)
 {
-	simon->vx = nx > 0 ? SIMON_WALKING_SPEED : -SIMON_WALKING_SPEED;
+	// Sử dụng hằng số từ CSimon.h
+	simon->vx = (nx > 0) ? CSimon::WALKING_SPEED : -CSimon::WALKING_SPEED;
 	simon->isSitting = false;
 }
 
@@ -67,21 +69,31 @@ void WalkState::Update(CSimon* simon, DWORD dt)
 {
 	simon->x += simon->vx * dt;
 
-	simon->vy += SIMON_GRAVITY * dt;
+	// Sử dụng hằng số từ CSimon.h
+	simon->vy += CSimon::GRAVITY * dt;
 	simon->y += simon->vy * dt;
-	
-	if (simon->y > GROUND_Y)
+
+	if (simon->y > CSimon::GROUND_Y)
 	{
-		simon->y = GROUND_Y;
+		simon->y = CSimon::GROUND_Y;
 		simon->vy = 0;
 	}
+
+	// Giới hạn di chuyển trong màn hình, dùng hằng số
 	if (simon->x < 0) simon->x = 0;
-	if (simon->x > 990) simon->x = 990;
+	if (simon->x > CSimon::WORLD_BOUNDARY_RIGHT) simon->x = CSimon::WORLD_BOUNDARY_RIGHT;
+
 	simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
 }
 
 void WalkState::Render(CSimon* simon)
 {
-	int aniId = (nx > 0) ? ID_ANI_SIMON_WALKING_RIGHT : ID_ANI_SIMON_WALKING_LEFT;
+	int aniId;
+	// Sử dụng enum class AnimationID
+	if (nx > 0)
+		aniId = static_cast<int>(AnimationID::SimonWalkRight);
+	else
+		aniId = static_cast<int>(AnimationID::SimonWalkLeft);
+
 	CAnimations::GetInstance()->Get(aniId)->Render(simon->x, simon->y);
 }

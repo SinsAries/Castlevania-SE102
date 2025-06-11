@@ -1,5 +1,6 @@
-#include "IdleState.h"
+﻿#include "IdleState.h"
 #include "Game.h"
+#include "Simon.h"
 #include "Animations.h"
 #include "WalkState.h"
 #include "SitState.h"
@@ -8,9 +9,9 @@
 
 void JumpState::Enter(CSimon* simon)
 {
-	if (simon->y == GROUND_Y)
+	if (simon->y == CSimon::GROUND_Y)
 	{
-		simon->vy = -SIMON_JUMP_SPEED_Y;
+		simon->vy = -CSimon::JUMP_SPEED_Y;
 	}
 	simon->isSitting = false;
 }
@@ -33,12 +34,12 @@ void JumpState::HandleInput(CSimon* simon, BYTE* states)
 
 void JumpState::Update(CSimon* simon, DWORD dt)
 {
-	simon->vy += SIMON_GRAVITY * dt;
+	simon->vy += CSimon::GRAVITY * dt;
 	simon->y += simon->vy * dt;
 
-	if (simon->y > GROUND_Y)
+	if (simon->y > CSimon::GROUND_Y)
 	{
-		simon->y = GROUND_Y;
+		simon->y = CSimon::GROUND_Y;
 		simon->vy = 0;
 		simon->SetState(new IdleState());
 	}
@@ -48,15 +49,14 @@ void JumpState::Update(CSimon* simon, DWORD dt)
 void JumpState::Render(CSimon* simon)
 {
 	int aniId;
-
-	if (simon->isAttacking)
-	{
-		aniId = (simon->nx >= 0) ? ID_ANI_SIMON_STAND_ATTACK_RIGHT : ID_ANI_SIMON_STAND_ATTACK_LEFT;
-	}
+	// Sử dụng enum class AnimationID
+	// Lưu ý: animation ngồi và nhảy của bạn đang dùng chung sprite
+	// nên tên ID có thể hơi khác, ở đây tôi dùng SimonJumpRight/Left
+	// cho rõ ràng, bạn cần đảm bảo ID này có trong GameIDs.h
+	if (simon->nx >= 0)
+		aniId = static_cast<int>(AnimationID::SimonSitRight);
 	else
-	{
-		aniId = (simon->nx >= 0) ? ID_ANI_SIMON_SIT_RIGHT : ID_ANI_SIMON_SIT_LEFT;
-	}
-	
+		aniId = static_cast<int>(AnimationID::SimonSitLeft);
+
 	CAnimations::GetInstance()->Get(aniId)->Render(simon->x, simon->y);
 }

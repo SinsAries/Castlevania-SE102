@@ -1,5 +1,6 @@
-#include "IdleState.h"
+﻿#include "IdleState.h"
 #include "Game.h"
+#include "Simon.h"
 #include "Animations.h"
 #include "WalkState.h"
 #include "SitState.h"
@@ -31,11 +32,12 @@ void SitState::HandleInput(CSimon* simon, BYTE* states) {
 }
 
 void SitState::Update(CSimon* simon, DWORD dt) {
-    simon->vy += SIMON_GRAVITY * dt;
+    // Sử dụng hằng số từ CSimon.h
+    simon->vy += CSimon::GRAVITY * dt;
     simon->y += simon->vy * dt;
 
-    if (simon->y > GROUND_Y) {
-        simon->y = GROUND_Y;
+    if (simon->y > CSimon::GROUND_Y) {
+        simon->y = CSimon::GROUND_Y;
         simon->vy = 0;
     }
     simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
@@ -43,13 +45,11 @@ void SitState::Update(CSimon* simon, DWORD dt) {
 
 void SitState::Render(CSimon* simon) {
     int aniId;
-
-    if (simon->isAttacking) {
-        aniId = (simon->nx > 0) ? ID_ANI_SIMON_SIT_ATTACK_RIGHT : ID_ANI_SIMON_SIT_ATTACK_LEFT;
-    }
-    else {
-        aniId = (simon->nx > 0) ? ID_ANI_SIMON_SIT_RIGHT : ID_ANI_SIMON_SIT_LEFT;
-    }
+    // Sử dụng enum class AnimationID
+    if (simon->nx > 0)
+        aniId = static_cast<int>(AnimationID::SimonSitRight);
+    else
+        aniId = static_cast<int>(AnimationID::SimonSitLeft);
 
     CAnimations::GetInstance()->Get(aniId)->Render(simon->x, simon->y);
 }

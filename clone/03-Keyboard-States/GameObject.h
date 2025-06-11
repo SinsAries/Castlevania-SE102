@@ -24,6 +24,8 @@ public:
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
 	void GetPosition(float& x, float& y) { x = this->x; y = this->y; }
 	void GetSpeed(float& vx, float& vy) { vx = this->vx; vy = this->vy; }
+	int getNx() { return this->nx; }
+	void SetNx(int nx) { this->nx = nx; }
 
 	void SetState(int state) { this->state = state; }
 	int GetState() { return this->state; }

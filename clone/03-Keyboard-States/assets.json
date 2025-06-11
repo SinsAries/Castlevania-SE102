@@ -1,0 +1,492 @@
+{
+  "sprites": {
+    "background_main": {
+      "textureId": "BACKGROUND",
+      "rect": [ 18, 92, 717, 247 ]
+    },
+    "brick_misc": {
+      "textureId": "MISC",
+      "rect": [ 372, 153, 387, 168 ]
+    },
+
+    "simon_walk_right_1": {
+      "textureId": "SIMON",
+      "rect": [ 1519, 21, 1534, 53 ]
+    },
+    "simon_walk_right_2": {
+      "textureId": "SIMON",
+      "rect": [ 1536, 21, 1551, 53 ]
+    },
+    "simon_walk_right_3": {
+      "textureId": "SIMON",
+      "rect": [ 1553, 21, 1568, 53 ]
+    },
+    "simon_walk_left_1": {
+      "textureId": "SIMON",
+      "rect": [ 29, 21, 44, 53 ]
+    },
+    "simon_walk_left_2": {
+      "textureId": "SIMON",
+      "rect": [ 46, 21, 61, 53 ]
+    },
+    "simon_walk_left_3": {
+      "textureId": "SIMON",
+      "rect": [ 63, 21, 78, 53 ]
+    },
+    "simon_idle_right": {
+      "textureId": "SIMON",
+      "rect": [ 1581, 21, 1596, 53 ]
+    },
+    "simon_idle_left": {
+      "textureId": "SIMON",
+      "rect": [ 1, 21, 16, 53 ]
+    },
+    "simon_sit_right": {
+      "textureId": "SIMON",
+      "rect": [ 1498, 21, 1513, 46 ]
+    },
+    "simon_sit_left": {
+      "textureId": "SIMON",
+      "rect": [ 84, 21, 99, 46 ]
+    },
+    "simon_stand_attack_right_1": {
+      "textureId": "SIMON",
+      "rect": [ 1573, 79, 1596, 108 ]
+    },
+    "simon_stand_attack_right_2": {
+      "textureId": "SIMON",
+      "rect": [ 1556, 79, 1571, 108 ]
+    },
+    "simon_stand_attack_right_3": {
+      "textureId": "SIMON",
+      "rect": [ 1531, 79, 1552, 108 ]
+    },
+    "simon_stand_attack_left_1": {
+      "textureId": "SIMON",
+      "rect": [ 1, 79, 24, 108 ]
+    },
+    "simon_stand_attack_left_2": {
+      "textureId": "SIMON",
+      "rect": [ 26, 79, 41, 108 ]
+    },
+    "simon_stand_attack_left_3": {
+      "textureId": "SIMON",
+      "rect": [ 45, 79, 66, 108 ]
+    },
+    "simon_sit_attack_right_1": {
+      "textureId": "SIMON",
+      "rect": [ 1427, 79, 1450, 101 ]
+    },
+    "simon_sit_attack_right_2": {
+      "textureId": "SIMON",
+      "rect": [ 1410, 79, 1425, 101 ]
+    },
+    "simon_sit_attack_right_3": {
+      "textureId": "SIMON",
+      "rect": [ 1385, 79, 1406, 101 ]
+    },
+    "simon_sit_attack_left_1": {
+      "textureId": "SIMON",
+      "rect": [ 147, 79, 170, 101 ]
+    },
+    "simon_sit_attack_left_2": {
+      "textureId": "SIMON",
+      "rect": [ 172, 79, 187, 101 ]
+    },
+    "simon_sit_attack_left_3": {
+      "textureId": "SIMON",
+      "rect": [ 191, 79, 212, 101 ]
+    },
+
+    "whip_left_1": {
+      "textureId": "SIMON",
+      "rect": [ 1, 485, 8, 508 ]
+    },
+    "whip_left_2": {
+      "textureId": "SIMON",
+      "rect": [ 10, 482, 26, 500 ]
+    },
+    "whip_left_3": {
+      "textureId": "SIMON",
+      "rect": [ 27, 485, 51, 493 ]
+    },
+    "whip_right_1": {
+      "textureId": "SIMON",
+      "rect": [ 1588, 485, 1595, 508 ]
+    },
+    "whip_right_2": {
+      "textureId": "SIMON",
+      "rect": [ 1572, 482, 1586, 500 ]
+    },
+    "whip_right_3": {
+      "textureId": "SIMON",
+      "rect": [ 1547, 485, 1571, 493 ]
+    },
+    "knife_left": {
+      "textureId": "SIMON",
+      "rect": [ 1228, 480, 1243, 488 ]
+    },
+    "knife_right": {
+      "textureId": "SIMON",
+      "rect": [ 354, 480, 369, 488 ]
+    },
+
+    "ui_black": {
+      "textureId": "BLACK",
+      "rect": [ 0, 0, 1050, 136 ]
+    },
+    "ui_heart": {
+      "textureId": "MISC",
+      "rect": [ 595, 191, 606, 202 ]
+    },
+    "ui_health_red": {
+      "textureId": "SIMON",
+      "rect": [ 793, 505, 794, 519 ]
+    },
+    "ui_health_white": {
+      "textureId": "SIMON",
+      "rect": [ 790, 505, 791, 519 ]
+    },
+
+    "font_A": {
+      "textureId": "FONT",
+      "rect": [
+        1,
+        1,
+        14,
+        14
+      ]
+    },
+    "font_B": {
+      "textureId": "FONT",
+      "rect": [
+        16,
+        1,
+        29,
+        14
+      ]
+    },
+    "font_C": {
+      "textureId": "FONT",
+      "rect": [
+        31,
+        1,
+        44,
+        14
+      ]
+    },
+    "font_D": {
+      "textureId": "FONT",
+      "rect": [
+        46,
+        1,
+        59,
+        14
+      ]
+    },
+    "font_E": {
+      "textureId": "FONT",
+      "rect": [
+        63,
+        1,
+        74,
+        14
+      ]
+    },
+    "font_F": {
+      "textureId": "FONT",
+      "rect": [
+        76,
+        1,
+        89,
+        14
+      ]
+    },
+    "font_G": {
+      "textureId": "FONT",
+      "rect": [
+        91,
+        1,
+        104,
+        14
+      ]
+    },
+    "font_H": {
+      "textureId": "FONT",
+      "rect": [
+        106,
+        1,
+        119,
+        14
+      ]
+    },
+    "font_I": {
+      "textureId": "FONT",
+      "rect": [
+        123,
+        1,
+        134,
+        14
+      ]
+    },
+    "font_J": {
+      "textureId": "FONT",
+      "rect": [
+        136,
+        1,
+        149,
+        14
+      ]
+    },
+    "font_K": {
+      "textureId": "FONT",
+      "rect": [
+        151,
+        1,
+        164,
+        14
+      ]
+    },
+    "font_L": {
+      "textureId": "FONT",
+      "rect": [
+        168,
+        1,
+        180,
+        14
+      ]
+    },
+    "font_M": {
+      "textureId": "FONT",
+      "rect": [
+        181,
+        1,
+        194,
+        14
+      ]
+    },
+    "font_N": {
+      "textureId": "FONT",
+      "rect": [
+        1,
+        15,
+        14,
+        28
+      ]
+    },
+    "font_O": {
+      "textureId": "FONT",
+      "rect": [
+        16,
+        15,
+        29,
+        28
+      ]
+    },
+    "font_P": {
+      "textureId": "FONT",
+      "rect": [
+        31,
+        15,
+        44,
+        28
+      ]
+    },
+    "font_Q": {
+      "textureId": "FONT",
+      "rect": [
+        46,
+        15,
+        59,
+        28
+      ]
+    },
+    "font_R": {
+      "textureId": "FONT",
+      "rect": [
+        61,
+        15,
+        74,
+        28
+      ]
+    },
+    "font_S": {
+      "textureId": "FONT",
+      "rect": [
+        76,
+        15,
+        89,
+        28
+      ]
+    },
+    "font_T": {
+      "textureId": "FONT",
+      "rect": [
+        93,
+        15,
+        104,
+        28
+      ]
+    },
+    "font_U": {
+      "textureId": "FONT",
+      "rect": [
+        106,
+        15,
+        119,
+        28
+      ]
+    },
+    "font_V": {
+      "textureId": "FONT",
+      "rect": [
+        121,
+        15,
+        134,
+        28
+      ]
+    },
+    "font_W": {
+      "textureId": "FONT",
+      "rect": [
+        136,
+        15,
+        149,
+        28
+      ]
+    },
+    "font_X": {
+      "textureId": "FONT",
+      "rect": [
+        151,
+        15,
+        164,
+        28
+      ]
+    },
+    "font_Y": {
+      "textureId": "FONT",
+      "rect": [
+        168,
+        15,
+        179,
+        28
+      ]
+    },
+    "font_Z": {
+      "textureId": "FONT",
+      "rect": [
+        181,
+        15,
+        194,
+        28
+      ]
+    },
+    "font_0": {
+      "textureId": "FONT",
+      "rect": [ 0, 29, 15, 42 ]
+    },
+    "font_1": {
+      "textureId": "FONT",
+      "rect": [ 17, 29, 30, 42 ]
+    },
+    "font_2": {
+      "textureId": "FONT",
+      "rect": [ 30, 29, 45, 42 ]
+    },
+    "font_3": {
+      "textureId": "FONT",
+      "rect": [ 45, 29, 60, 42 ]
+    },
+    "font_4": {
+      "textureId": "FONT",
+      "rect": [ 60, 29, 75, 42 ]
+    },
+    "font_5": {
+      "textureId": "FONT",
+      "rect": [ 75, 29, 90, 42 ]
+    },
+    "font_6": {
+      "textureId": "FONT",
+      "rect": [ 90, 29, 105, 42 ]
+    },
+    "font_7": {
+      "textureId": "FONT",
+      "rect": [ 105, 29, 120, 42 ]
+    },
+    "font_8": {
+      "textureId": "FONT",
+      "rect": [ 120, 29, 135, 42 ]
+    },
+    "font_9": {
+      "textureId": "FONT",
+      "rect": [ 135, 29, 150, 42 ]
+    },
+    "font_symbol_-": {
+      "textureId": "FONT",
+      "rect": [ 152, 29, 163, 42 ]
+    }
+  },
+  "animations": {
+    "SimonWalkRight": {
+      "spriteIds": [ "simon_walk_right_1", "simon_walk_right_2", "simon_walk_right_3" ],
+      "defaultFrameTime": 100
+    },
+    "SimonWalkLeft": {
+      "spriteIds": [ "simon_walk_left_1", "simon_walk_left_2", "simon_walk_left_3" ],
+      "defaultFrameTime": 100
+    },
+    "SimonIdleRight": {
+      "spriteIds": [ "simon_idle_right" ],
+      "defaultFrameTime": 100
+    },
+    "SimonIdleLeft": {
+      "spriteIds": [ "simon_idle_left" ],
+      "defaultFrameTime": 100
+    },
+    "SimonSitRight": {
+      "spriteIds": [ "simon_sit_right" ],
+      "defaultFrameTime": 100
+    },
+    "SimonSitLeft": {
+      "spriteIds": [ "simon_sit_left" ],
+      "defaultFrameTime": 100
+    },
+    "SimonStandAttackRight": {
+      "spriteIds": [ "simon_stand_attack_right_1", "simon_stand_attack_right_2", "simon_stand_attack_right_3" ],
+      "defaultFrameTime": 300
+    },
+    "SimonStandAttackLeft": {
+      "spriteIds": [ "simon_stand_attack_left_1", "simon_stand_attack_left_2", "simon_stand_attack_left_3" ],
+      "defaultFrameTime": 300
+    },
+    "SimonSitAttackRight": {
+      "spriteIds": [ "simon_sit_attack_right_1", "simon_sit_attack_right_2", "simon_sit_attack_right_3" ],
+      "defaultFrameTime": 300
+    },
+    "SimonSitAttackLeft": {
+      "spriteIds": [ "simon_sit_attack_left_1", "simon_sit_attack_left_2", "simon_sit_attack_left_3" ],
+      "defaultFrameTime": 300
+    },
+    "WeaponWhipLeft": {
+      "spriteIds": [ "whip_left_1", "whip_left_2", "whip_left_3" ],
+      "defaultFrameTime": 300
+    },
+    "WeaponWhipRight": {
+      "spriteIds": [ "whip_right_1", "whip_right_2", "whip_right_3" ],
+      "defaultFrameTime": 300
+    },
+    "WeaponKnifeLeft": {
+      "spriteIds": [ "knife_left" ],
+      "defaultFrameTime": 100
+    },
+    "WeaponKnifeRight": {
+      "spriteIds": [ "knife_right" ],
+      "defaultFrameTime": 100
+    },
+    "Brick": {
+      "spriteIds": [ "brick_misc" ],
+      "defaultFrameTime": 100
+    }
+  }
+}

@@ -1,13 +1,7 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "Simon.h"
-
-#define ID_ANI_WEAPON_RIGHT 10420250001
-#define ID_ANI_WEAPON_LEFT 10420250002
-#define ID_ANI_WEAPON_IDLE  10420250003
-
-#define ID_ANI_WEAPON_KNIFE_RIGHT 10420250004
-#define ID_ANI_WEAPON_KNIFE_LEFT 10420250005
+#include "GameIDs.h"
 
 class CWeapon : public CGameObject
 {

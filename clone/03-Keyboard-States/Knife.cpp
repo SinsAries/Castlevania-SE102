@@ -16,6 +16,6 @@ void CKnife::UpdatePosition(float simon_x, float simon_y, int aniId, int frame, 
 
 void CKnife::Render()
 {
-	int aniId = nx > 0 ? ID_ANI_WEAPON_KNIFE_RIGHT : ID_ANI_WEAPON_KNIFE_LEFT;
+	int aniId = nx > 0 ? static_cast<int>(AnimationID::WeaponKnifeRight) : static_cast<int>(AnimationID::WeaponKnifeLeft);
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 }
