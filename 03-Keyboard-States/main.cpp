@@ -68,7 +68,7 @@ CTiledBackground* background = NULL;
 
 CSampleKeyHandler* keyHandler;
 
-vector<LPGAMEOBJECT> objects;
+vector<LPGAMEOBJECT> objects, bg;
 Quad* root = new Quad(0, Point(0, 0), Point(1000, 1000));
 
 
@@ -159,7 +159,7 @@ void LoadResources()
 		}
 
 		CTiledBackground* background = new CTiledBackground(0, 0, ids, mapArray, 32, height, width);
-		objects.push_back(background);
+		bg.push_back(background);
 	}
 
 	{
@@ -223,6 +223,7 @@ void LoadResources()
 				for (int j = y1; j <= y2; j += brickHeight)
 				{
 					CBrick* brick = new CBrick(i, j);
+					
 					objects.push_back(brick);
 				}
 			}
@@ -270,9 +271,15 @@ void Render()
 	FLOAT NewBlendFactor[4] = { 0,0,0,0 };
 	pD3DDevice->OMSetBlendState(g->GetAlphaBlending(), NewBlendFactor, 0xffffffff);
 
+	for (int i = 0; i < (int)bg.size(); i++)
+	{
+		bg[i]->Render();
+	}
+
 	for (int i = 0; i < (int)objects.size(); i++)
 	{
 		objects[i]->Render();
+		objects[i]->RenderBoundingBox();
 	}
 
 	root->Render();

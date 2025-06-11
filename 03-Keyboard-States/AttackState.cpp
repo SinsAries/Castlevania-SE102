@@ -62,8 +62,6 @@ void AttackState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObject
 
 	weapon->UpdatePosition(simon->x, simon->y, aniId, frame, dt);
 
-	//DebugOut(L"Cuong ngu nhu con cu: %d\n", attackTime);
-
 	bool check = attackTime > 0;
 	if (attackTime <= 0) {
 		simon->isAttacking = false;

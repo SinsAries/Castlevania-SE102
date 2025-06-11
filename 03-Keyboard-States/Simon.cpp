@@ -66,3 +66,10 @@ void CSimon::OnCollisionWith(LPCOLLISIONEVENT e)
 			vx = 0;
 		}
 }
+
+void CSimon::OnNoCollision(DWORD dt)
+{
+	x += vx * dt;
+	y += vy * dt;
+	isOnPlatform = false;
+}

@@ -24,11 +24,6 @@ void SitState::HandleInput(CSimon* simon, BYTE* states) {
         simon->SetState(new AttackState(simon, 1));
         return;
     }
-    else if (game->IsKeyDown(DIK_B) && simon->attackCoolDown <= 0)
-    {
-        simon->SetState(new AttackState(simon, 2));
-        return;
-    }
 
     if (!game->IsKeyDown(DIK_DOWN)) {
         simon->SetState(new IdleState());
@@ -37,13 +32,11 @@ void SitState::HandleInput(CSimon* simon, BYTE* states) {
 
 void SitState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObjects) {
     simon->vy += SIMON_GRAVITY * dt;
-
+    
     CCollision::GetInstance()->Process(simon, dt, coObjects);
 
-    simon->y += simon->vy * dt;
 
     if (simon->isOnPlatform) {
-        //simon->y = GROUND_Y;
         simon->vy = 0;
     }
     simon->attackCoolDown = max(0, simon->attackCoolDown - dt);

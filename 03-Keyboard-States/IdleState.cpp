@@ -16,23 +16,9 @@ void IdleState::Enter(CSimon* simon)
 
 void IdleState::HandleInput(CSimon* simon, BYTE* states)
 {
-    //DebugOut(L"[INFO] Current attack cooldown: %d\n", simon->attackCoolDown);
+    DebugOut(L"[INFO] Current attack cooldown: %d\n", simon->attackCoolDown);
 
     CGame* game = CGame::GetInstance();
-
-    if (game->IsKeyDown(DIK_UP)) {
-        if (game->IsKeyDown(DIK_RIGHT)) {
-            simon->SetState(new JumpState(simon, 1));
-            return;
-        }
-        else
-            if (game->IsKeyDown(DIK_LEFT)) {
-                simon->SetState(new JumpState(simon, -1));
-                return;
-            }
-        simon->SetState(new JumpState(simon, 0));
-        return;
-    }
 
     if (game->IsKeyDown(DIK_RIGHT)) {
         simon->SetState(new WalkState(simon, 1));
@@ -53,23 +39,19 @@ void IdleState::HandleInput(CSimon* simon, BYTE* states)
         simon->SetState(new AttackState(simon, 1));
         return;
     }
-    else if (game->IsKeyDown(DIK_B) && simon->attackCoolDown <= 0)
-    {
-        simon->SetState(new AttackState(simon, 2));
-        return;
+    else if (game->IsKeyDown(DIK_UP)) {
+        simon->SetState(new JumpState());
     }
 }
 
 void IdleState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     simon->vy += SIMON_GRAVITY * dt;
-
+    
     CCollision::GetInstance()->Process(simon, dt, coObjects);
 
-    simon->y += simon->vy * dt;
-
-    if (simon->isOnPlatform) {
-        //simon->y = GROUND_Y;
+    if (simon->isOnPlatform)
+    {
         simon->vy = 0;
     }
     simon->attackCoolDown = max(0, simon->attackCoolDown - dt);

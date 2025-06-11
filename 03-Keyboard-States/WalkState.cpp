@@ -26,30 +26,15 @@ void WalkState::HandleInput(CSimon* simon, BYTE* states)
 		simon->SetState(new AttackState(simon, 0));
 		return;
 	}
-
 	if (game->IsKeyDown(DIK_X) && simon->attackCoolDown <= 0)
 	{
 		simon->SetState(new AttackState(simon, 1));
 		return;
 	}
 
-	if (game->IsKeyDown(DIK_B) && simon->attackCoolDown <= 0)
+	if (game->IsKeyDown(DIK_UP))
 	{
-		simon->SetState(new AttackState(simon, 2));
-		return;
-	}
-
-	if (game->IsKeyDown(DIK_UP)) {
-		if (game->IsKeyDown(DIK_RIGHT)) {
-			simon->SetState(new JumpState(simon, 1));
-			return;
-		}
-		else
-			if (game->IsKeyDown(DIK_LEFT)) {
-				simon->SetState(new JumpState(simon, -1));
-				return;
-			}
-		simon->SetState(new JumpState(simon, 0));
+		simon->SetState(new JumpState());
 		return;
 	}
 
@@ -76,31 +61,19 @@ void WalkState::HandleInput(CSimon* simon, BYTE* states)
 		simon->SetState(new IdleState());
 		return;
 	}
-	if (game->IsKeyDown(DIK_RIGHT)) {
-		simon->SetState(new WalkState(simon, 1));
-	}
-	else if (game->IsKeyDown(DIK_LEFT)) {
-		simon->SetState(new WalkState(simon, -1));
-	}
 }
 
 void WalkState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	simon->vy += SIMON_GRAVITY * dt;
-
 	CCollision::GetInstance()->Process(simon, dt, coObjects);
-
-	//simon->y += simon->vy * dt;
-
-	//simon->x += simon->vx * dt;
 
 	if (simon->isOnPlatform)
 	{
-		//simon->y = GROUND_Y;
 		simon->vy = 0;
 	}
-	if (simon->x < 0) simon->x = 0;
-	if (simon->x > 990) simon->x = 990;
+	if (simon->x < 20) simon->x = 0;
+	if (simon->x > 900) simon->x = 900;
 	simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
 }
 

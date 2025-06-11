@@ -11,7 +11,7 @@
 
 using namespace std;
 
-#define ID_TEX_BBOX -100
+#define ID_TEX_BBOX 999
 
 class CGameObject
 {

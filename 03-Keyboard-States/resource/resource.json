@@ -4,7 +4,8 @@
         [20, "textures/misc.png"],
         [30, "textures/simon.png"],
         [40, "resource/Scene1/tileset.png"],
-	    [50, "resource/Scene1/Brick.png"]
+	    [50, "resource/Scene1/Brick.png"],
+        [999, "resource/Scene1/bbox.png"]
     ],
     "items": [
         [20001, 50, 0, 0, 15, 15, "BRICK"]

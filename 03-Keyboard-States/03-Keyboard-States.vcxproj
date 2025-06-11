@@ -188,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="textures\background.png" />
+    <Image Include="textures\bbox.png" />
     <Image Include="textures\mario.png" />
     <Image Include="textures\misc.png" />
     <Image Include="textures\simon.png" />

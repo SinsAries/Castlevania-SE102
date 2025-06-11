@@ -20,9 +20,9 @@ class AttackState;
 
 #define SIMON_WALKING_SPEED		0.1f
 
-#define SIMON_JUMP_SPEED_Y		0.3f
+#define SIMON_JUMP_SPEED_Y		0.5f
 
-#define SIMON_GRAVITY			0.001f
+#define SIMON_GRAVITY			0.002f
 
 #define SIMON_STATE_IDLE			0
 #define SIMON_STATE_WALKING_RIGHT	100
@@ -78,7 +78,7 @@ protected:
 	BOOLEAN isAttacking;
 	ISimonState* currentState;
 	int attackCoolDown;
-	BOOLEAN isOnPlatform = 1;
+	BOOLEAN isOnPlatform = false;
 public:
 	CSimon(float x, float y);
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) override;
@@ -88,6 +88,7 @@ public:
 	virtual void OnKeyDown(int KeyCode);
 	virtual void OnKeyUp(int KeyCode);
 	void OnCollisionWith(LPCOLLISIONEVENT e) override;
+	void OnNoCollision(DWORD dt) override;
 	int IsCollidable()
 	{
 		return 1;
