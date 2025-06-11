@@ -1,0 +1,62 @@
+{
+    "textures": [
+        [0, "textures/mario.png"],
+        [20, "textures/misc.png"],
+        [30, "textures/simon.png"],
+        [40, "resource/Scene1/tileset.png"],
+	[50, "textures/font.png"],
+	[100, "resource/Scene1/brick.png"],
+        [999, "resource/Scene1/bbox.png"]
+    ],
+    "items": [
+        [20001, 50, 0, 0, 15, 15, "BRICK"]
+    ],
+    "sprites": [
+        [10101, 30, 1519, 21, 1534, 53, "WALK RIGHT"],
+        [10102, 30, 1536, 21, 1551, 53, "WALK RIGHT"],
+        [10103, 30, 1553, 21, 1568, 53, "WALK RIGHT"],
+        [10111, 30, 29, 21, 44, 53, "WALK LEFT"],
+        [10112, 30, 46, 21, 61, 53, "WALK LEFT"],
+        [10113, 30, 63, 21, 78, 53, "WALK LEFT"],
+        [10121, 30, 1581, 21, 1596, 53, "IDLE RIGHT"],
+        [10131, 30, 1, 21, 16, 53, "IDLE LEFT"],
+        [10141, 30, 1498, 21, 1513, 46, "JUMP/DUCK RIGHT"],
+        [10151, 30, 84, 21, 99, 46, "JUMP/DUCK LEFT"],
+        [10161, 30, 1573, 79, 1596, 108, "STAND ATTACK RIGHT"],
+        [10162, 30, 1556, 79, 1571, 108, "STAND ATTACK RIGHT"],
+        [10163, 30, 1531, 79, 1552, 108, "STAND ATTACK RIGHT"],
+        [10171, 30, 1, 79, 24, 108, "STAND ATTACK LEFT"],
+        [10172, 30, 26, 79, 41, 108, "STAND ATTACK LEFT"],
+        [10173, 30, 45, 79, 66, 108, "STAND ATTACK LEFT"],
+        [10181, 30, 1427, 79, 1450, 101, "SIT ATTACK RIGHT"],
+        [10182, 30, 1410, 79, 1425, 101, "SIT ATTACK RIGHT"],
+        [10183, 30, 1385, 79, 1406, 101, "SIT ATTACK RIGHT"],
+        [10191, 30, 147, 79, 170, 101, "SIT ATTACK LEFT"],
+        [10192, 30, 172, 79, 187, 101, "SIT ATTACK LEFT"],
+        [10193, 30, 191, 79, 212, 101, "SIT ATTACK LEFT"],
+        [20101, 30, 1, 485, 8, 508, "WEAPON LEFT"],
+        [20102, 30, 10, 482, 26, 500, "WEAPON LEFT"],
+        [20103, 30, 27, 485, 51, 493, "WEAPON LEFT"],
+        [20111, 30, 1588, 485, 1595, 508, "WEAPON RIGHT"],
+        [20112, 30, 1572, 482, 1586, 500, "WEAPON RIGHT"],
+        [20113, 30, 1547, 485, 1571, 493, "WEAPON RIGHT"],
+        [20221, 30, 1228, 480, 1243, 488, "KNIFE LEFT"],
+        [20231, 30, 354, 480, 369, 488, "KNIFE RIGHT"]
+    ],
+    "animation": [
+        [2500, 100, [10101, 10102, 10103], "ID_ANI_SIMON_WALKING_RIGHT"],
+        [2501, 100, [10111, 10112, 10113], "ID_ANI_SIMON_WALKING_LEFT"],
+        [2400, 100, [10121], "ID_ANI_SIMON_IDLE_RIGHT"],
+        [2401, 100, [10131], "ID_ANI_SIMON_IDLE_LEFT"],
+        [2900, 100, [10141], "ID_ANI_SIMON_SIT_RIGHT"],
+        [2901, 100, [10151], "ID_ANI_SIMON_SIT_LEFT"],
+        [2600, 300, [10161, 10162, 10163], "ID_ANI_SIMON_STAND_ATTACK_RIGHT"],
+        [2601, 300, [10171, 10172, 10173], "ID_ANI_SIMON_STAND_ATTACK_LEFT"],
+        [2800, 300, [10181, 10182, 10183], "ID_ANI_SIMON_SIT_ATTACK_RIGHT"],
+        [2801, 300, [10191, 10192, 10193], "ID_ANI_SIMON_SIT_ATTACK_LEFT"],
+        [10420250002, 300, [20101, 20102, 20103], "ID_ANI_WEAPON_LEFT"],
+        [10420250001, 300, [20111, 20112, 20113], "ID_ANI_WEAPON_RIGHT"],
+        [10420250005, 100, [20221], "ID_ANI_WEAPON_KNIFE_LEFT"],
+        [10420250004, 100, [20231], "ID_ANI_WEAPON_KNIFE_RIGHT"]
+    ]
+}

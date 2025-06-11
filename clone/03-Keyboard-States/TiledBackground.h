@@ -1,30 +1,38 @@
 ﻿#pragma once
 #include "GameObject.h"
+#include "Animation.h"
+#include "Animations.h"
 #include "Sprite.h"
+#include "Sprites.h"
 #include "Game.h"
+#include "Textures.h"
 #include <vector>
-#include "debug.h"
-
-#define TILE_WIDTH 32
-#define TILE_HEIGHT 32
 
 class CTiledBackground : public CGameObject {
 private:
-	std::vector<LPSPRITE> tiles;
-	int mapWidth;  // Số tile theo chiều ngang của map
-	int mapHeight; // Số tile theo chiều dọc của map
-	int numTilesX; // Số lượng tile trong tileset theo chiều ngang
-	int numTilesY; // Số lượng tile trong tileset theo chiều dọc
+    std::vector<CSprite*> tiles; // Danh sách các sprite tile
+    int tileWidth;
+    int tileHeight;
+    int mapWidth; // Chiều rộng bản đồ
+    int mapHeight; // Chiều cao bản đồ
+    int** mapData; // Dữ liệu bản đồ từ JSON
 
 public:
-	CTiledBackground(float x, float y, LPSPRITE tilesetSprite, int mapWidth, int mapHeight);
+    CTiledBackground(float x, float y, vector<int> ids, int** mapData, int tile_size, int mapHeight, int mapWidth) : CGameObject(x, y) {
+        this->tileHeight = tile_size;
+        this->tileWidth = tile_size;
+        this->mapData = mapData;
+        this->mapWidth = mapWidth;
+        this->mapHeight = mapHeight;
+        for (int id : ids) {
+            CSprite* sprite = CSprites::GetInstance()->Get(id);
+            tiles.push_back(sprite);
+        }
+    }
+    void Render();
+    void Update(DWORD dt) {}
 
-	virtual void Render();
-	virtual void Update(DWORD dt) {} // Background không cần update
-	virtual void GetBoundingBox(float& l, float& t, float& r, float& b) {} // Background không có bounding box
-
-	// Hàm lấy chỉ số tile dựa trên vị trí trong map
-	int GetTileIndex(int mapX, int mapY);
-
-	~CTiledBackground();
+    ~CTiledBackground() {
+        tiles.clear();
+    }
 };

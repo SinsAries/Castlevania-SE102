@@ -54,6 +54,14 @@ public:
 	// Dọn dẹp tất cả tài nguyên, đối tượng đã được tạo trong scene
 	virtual void Unload() override;
 
+	static LPCWSTR StringToLPCWSTR(const std::string& str)
+	{
+		int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
+		wchar_t* wide_str = new wchar_t[size];
+		MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wide_str, size);
+		return wide_str;
+	}
+
 	// Hàm tiện ích để lấy con trỏ đến đối tượng người chơi
 	CSimon* GetPlayer() { return player; }
 };

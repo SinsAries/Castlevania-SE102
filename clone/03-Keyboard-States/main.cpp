@@ -151,7 +151,7 @@ int WINAPI WinMain(
 
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
-	LPSCENE mainScene = new CPlayScene(1, "scene_main.json");
+	LPSCENE mainScene = new CPlayScene(1, "resource/Scene1");
 
 	game->AddScene(mainScene);
 

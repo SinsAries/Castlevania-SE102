@@ -6,7 +6,8 @@ enum class TextureID {
 	MISC = 20,
 	SIMON = 30,
 	BACKGROUND = 40,
-	FONT = 50
+	FONT = 50,
+	BRICK = 100
 };
 
 enum class SpriteID {

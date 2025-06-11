@@ -12,19 +12,19 @@ T Clamp(T value, T min, T max) {
 Camera::Camera(int screenWidth, int screenHeight)
     : width(screenWidth), height(screenHeight) {
     x = 0;
-    y = 0;
+    y = -40;
 }
 
 void Camera::FollowSimon(float simonX, float simonY)
 {
     this->x = simonX - width / 2;
-    this->y = simonY - height / 2;
+    //this->y = simonY - height / 2;
 
     // Giới hạn Camera theo min/max đã đặt
     if (this->x < limitMinX) this->x = limitMinX;
-    if (this->y < limitMinY) this->y = limitMinY;
+    //if (this->y < limitMinY) this->y = limitMinY;
     if (this->x > limitMaxX - width) this->x = limitMaxX - width;
-    if (this->y > limitMaxY - height) this->y = limitMaxY - height;
+    //if (this->y > limitMaxY - height) this->y = limitMaxY - height;
 }
 
 
