@@ -65,17 +65,14 @@ void WalkState::HandleInput(CSimon* simon, BYTE* states)
 	}
 }
 
-void WalkState::Update(CSimon* simon, DWORD dt)
+void WalkState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	simon->x += simon->vx * dt;
-
 	// Sử dụng hằng số từ CSimon.h
 	simon->vy += CSimon::GRAVITY * dt;
-	simon->y += simon->vy * dt;
+	CCollision::GetInstance()->Process(simon, dt, coObjects);
 
-	if (simon->y > CSimon::GROUND_Y)
+	if (simon->isOnPlatform)
 	{
-		simon->y = CSimon::GROUND_Y;
 		simon->vy = 0;
 	}
 

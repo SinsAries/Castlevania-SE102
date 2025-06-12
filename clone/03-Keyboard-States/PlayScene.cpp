@@ -1,7 +1,7 @@
 ﻿#include <fstream>
 #include <iostream>
 
-#include "nlohmann/json.hpp"
+#include "json.hpp"
 #include "PlayScene.h"
 #include "Game.h"
 #include "debug.h"
@@ -18,7 +18,7 @@ extern std::wstring s2ws(const std::string& s);
 
 CPlayScene::CPlayScene(int id, std::string filePath) : CScene(id)
 {
-	this->sceneFilePath = filePath;
+	this->sceneFilePath = filePath + "/map.json";
 	this->player = nullptr;
 	this->background = nullptr;
 	this->quadtree = nullptr;
@@ -44,7 +44,7 @@ void CPlayScene::Load()
 	}
 	json data = json::parse(file);
 
-	std::ifstream file2("./resource/Scene1/map.json");
+	std::ifstream file2(sceneFilePath);
 
 
 	// Kiểm tra xem file có mở thành công không
@@ -61,6 +61,8 @@ void CPlayScene::Load()
 	for (int i = 0; i < data["textures"].size(); i++) {
 		textures->Add(data["textures"][i][0], StringToLPCWSTR(data["textures"][i][1].get<string>()));
 	}
+	auto mapTexture = mapData["texture"];
+	textures->Add(mapTexture[0], StringToLPCWSTR(mapTexture[1].get<string>()));
 
 	{
 		// Trong LoadResources()
@@ -83,7 +85,6 @@ void CPlayScene::Load()
 			mapArray[i] = new int[width];
 			for (int j = 0; j < width; j++) {
 				mapArray[i][j] = mapData["map"].at(i).at(j).get<int>();
-
 			}
 		}
 
@@ -93,18 +94,18 @@ void CPlayScene::Load()
 
 	{
 		// Load objects
-		/*auto items = data["items"];
+		auto items = data["items"];
 		for (int i = 0; i < items.size(); i++)
 		{
 			LPTEXTURE texItem = textures->Get(items[i][1]);
 			sprites->Add(items[i][0], items[i][2], items[i][3], items[i][4], items[i][5], texItem);
-		}*/
+		}
 
 		// Add brick
-		/*LPANIMATION ani;
+		LPANIMATION ani;
 		ani = new CAnimation(100);
-		ani->Add(ID_SPRITE_BRICK);
-		animations->Add(ID_ANI_BRICK, ani);
+		ani->Add(100);
+		animations->Add(100, ani);
 
 
 		auto bricksMap = mapData["brick"];
@@ -123,7 +124,7 @@ void CPlayScene::Load()
 					objects.push_back(brick);
 				}
 			}
-		}*/
+		}
 	}
 
 	std::map<std::string, TextureID> textureIdMap = {
@@ -210,9 +211,13 @@ void CPlayScene::Load()
 
 void CPlayScene::Update(DWORD dt)
 {
-	for (size_t i = 0; i < objects.size(); i++)
+	vector<LPGAMEOBJECT> coObjects;
+	for (auto obj : objects)
+		coObjects.push_back(obj);
+
+	for (int i = 0; i < (int)objects.size(); i++)
 	{
-		objects[i]->Update(dt);
+		objects[i]->Update(dt, &coObjects);
 	}
 
 	if (player) {

@@ -23,22 +23,22 @@ int GetAttackAnimationId(CSimon* simon)
 
 
 AttackState::AttackState() {
-	// Sử dụng hằng số từ CSimon
+	// Sử dụng hằng số từ CSimon]
+	weapon = new CWhip(0, 0, 1);
 	attackTime = CSimon::ATTACK_TIME_MS;
-	whip = new CWhip(0, 0, 1);
 }
 
 AttackState::AttackState(CSimon* simon, int type) {
 	// Sử dụng hằng số từ CSimon
 	attackTime = CSimon::ATTACK_TIME_MS;
 	if (type == 0)
-		whip = new CWhip(0, 0, 1);
+		weapon = new CWhip(0, 0, 1);
 	else
-		whip = new CKnife(simon->x + 10, simon->y - 10, 1);
+		weapon = new CKnife(simon->x + 10, simon->y - 10, 1);
 }
 
 AttackState::~AttackState() {
-	delete whip;
+	delete weapon;
 }
 
 void AttackState::Enter(CSimon* simon)
@@ -46,7 +46,7 @@ void AttackState::Enter(CSimon* simon)
 	attackTime = CSimon::ATTACK_TIME_MS;
 	simon->isAttacking = true;
 	simon->vx = 0;
-	whip->SetDirection(simon->getNx());
+	weapon->SetDirection(simon->getNx());
 
 	// Sử dụng hàm hỗ trợ
 	int aniId = GetAttackAnimationId(simon);
@@ -58,7 +58,7 @@ void AttackState::HandleInput(CSimon* simon, BYTE* states)
 	// không nhận keyboard khi đang tấn công
 }
 
-void AttackState::Update(CSimon* simon, DWORD dt)
+void AttackState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	attackTime -= dt;
 
@@ -69,7 +69,7 @@ void AttackState::Update(CSimon* simon, DWORD dt)
 	// Sử dụng hàm hỗ trợ
 	int aniId = GetAttackAnimationId(simon);
 
-	whip->UpdatePosition(simon->x, simon->y, aniId, frame, dt);
+	weapon->UpdatePosition(simon->x, simon->y, aniId, frame, dt);
 
 	if (attackTime <= 0) {
 		simon->isAttacking = false;
@@ -78,12 +78,14 @@ void AttackState::Update(CSimon* simon, DWORD dt)
 		return;
 	}
 
-	// Sử dụng hằng số từ CSimon.h
-	simon->vy += CSimon::GRAVITY * dt;
+	simon->vy += CSimon::SIMON_GRAVITY * dt;
+
+	CCollision::GetInstance()->Process(simon, dt, coObjects);
+
 	simon->y += simon->vy * dt;
 
-	if (simon->y > CSimon::GROUND_Y) {
-		simon->y = CSimon::GROUND_Y;
+	if (simon->isOnPlatform) {
+		//simon->y = GROUND_Y;
 		simon->vy = 0;
 	}
 }
@@ -94,5 +96,5 @@ void AttackState::Render(CSimon* simon)
 	int aniId = GetAttackAnimationId(simon);
 	CAnimations::GetInstance()->Get(aniId)->Render(simon->x, simon->y);
 
-	whip->Render();
+	weapon->Render();
 }

@@ -1,5 +1,5 @@
 ﻿#include <windows.h>
-#include "nlohmann/json.hpp"
+#include "json.hpp"
 #include <fstream>      // Để đọc file
 #include <string>       // Để dùng std::string
 #include <map>          // Để dùng std::map cho việc ánh xạ ID
@@ -19,8 +19,8 @@ using json = nlohmann::json;
 #define MAIN_WINDOW_TITLE L"Castlevania"
 #define WINDOW_ICON_PATH L"mario.ico"
 
-#define SCREEN_WIDTH 540
-#define SCREEN_HEIGHT 405
+#define SCREEN_WIDTH 400
+#define SCREEN_HEIGHT 285
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -151,11 +151,16 @@ int WINAPI WinMain(
 
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
-	LPSCENE mainScene = new CPlayScene(1, "resource/Scene1");
+	//LPSCENE scene1 = new CPlayScene(1, "resource/Scene1");
+	LPSCENE scene2 = new CPlayScene(2, "resource/Scene2");
+	//LPSCENE scene3 = new CPlayScene(3, "resource/Scene3");
 
-	game->AddScene(mainScene);
 
-	game->SwitchScene(1);
+	//game->AddScene(scene1);
+	game->AddScene(scene2);
+	//game->AddScene(scene3);
+
+	game->SwitchScene(2);
 
 	// --------------------------
 

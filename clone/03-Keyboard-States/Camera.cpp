@@ -12,7 +12,7 @@ T Clamp(T value, T min, T max) {
 Camera::Camera(int screenWidth, int screenHeight)
     : width(screenWidth), height(screenHeight) {
     x = 0;
-    y = -40;
+    y = -100;
 }
 
 void Camera::FollowSimon(float simonX, float simonY)

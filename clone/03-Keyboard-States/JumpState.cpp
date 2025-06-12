@@ -9,7 +9,7 @@
 
 void JumpState::Enter(CSimon* simon)
 {
-	if (simon->y == CSimon::GROUND_Y)
+	if (simon->isOnPlatform )
 	{
 		simon->vy = -CSimon::JUMP_SPEED_Y;
 	}
@@ -30,19 +30,29 @@ void JumpState::HandleInput(CSimon* simon, BYTE* states)
 		simon->SetState(new AttackState(simon, 1));
 		return;
 	}
+	else if (game->IsKeyDown(DIK_RIGHT))
+	{
+		simon->SetState(new SitState());
+		return;
+	}
+	else if (game->IsKeyDown(DIK_LEFT))
+	{
+		simon->SetState(new SitState());
+		return;
+	}
 }
 
-void JumpState::Update(CSimon* simon, DWORD dt)
+void JumpState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	simon->vy += CSimon::GRAVITY * dt;
-	simon->y += simon->vy * dt;
+	CCollision::GetInstance()->Process(simon, dt, coObjects);
 
-	if (simon->y > CSimon::GROUND_Y)
+	if (simon->isOnPlatform)
 	{
-		simon->y = CSimon::GROUND_Y;
 		simon->vy = 0;
 		simon->SetState(new IdleState());
 	}
+
 	simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
 }
 

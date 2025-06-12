@@ -43,15 +43,14 @@ void IdleState::HandleInput(CSimon* simon, BYTE* states)
 	}
 }
 
-void IdleState::Update(CSimon* simon, DWORD dt)
+void IdleState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// Sử dụng hằng số từ CSimon.h
 	simon->vy += CSimon::GRAVITY * dt;
-	simon->y += simon->vy * dt;
+	CCollision::GetInstance()->Process(simon, dt, coObjects);
 
-	if (simon->y > CSimon::GROUND_Y)
+	if (simon->isOnPlatform)
 	{
-		simon->y = CSimon::GROUND_Y;
 		simon->vy = 0;
 	}
 	simon->attackCoolDown = max(0, simon->attackCoolDown - dt);

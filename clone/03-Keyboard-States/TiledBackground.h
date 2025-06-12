@@ -30,9 +30,12 @@ public:
         }
     }
     void Render();
-    void Update(DWORD dt) {}
+    void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) {}
 
     ~CTiledBackground() {
         tiles.clear();
     }
+
+    float GetWidth() const override { return 0; }
+    float GetHeight() const override { return 0; }
 };

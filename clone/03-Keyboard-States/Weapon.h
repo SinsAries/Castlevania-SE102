@@ -10,12 +10,12 @@ protected:
     int nx;              // hướng của weapon (theo hướng Simon)
     DWORD activeTime;    // thời gian tồn tại của weapon
 public:
-    CWeapon(float x, float y, int nx) : CGameObject(x, y), nx(nx) {
+    CWeapon(float x, float y, int nx) : CGameObject(x, y, nx) {
         isActive = true;
         activeTime = 0;
     }
 
-    virtual void Update(DWORD dt) = 0;
+    virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) = 0;
     virtual void Render() = 0;
     virtual void UpdatePosition(float simon_x, float simon_y, int aniId, int frame, DWORD dt) = 0;
 

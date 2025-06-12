@@ -28,6 +28,8 @@ void CTiledBackground::Render()
             int tileIndex = mapData[row2][col2];
             float xPos = x + col * tileWidth;
             float yPos = y + row * tileHeight;
+            if(abs(yPos - cy) < 100)
+				continue; // Bỏ qua nếu tile
             tiles[tileIndex]->Draw(xPos, yPos);
 
         }

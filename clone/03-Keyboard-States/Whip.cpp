@@ -2,7 +2,7 @@
 #include "Simon.h"
 #include "Animations.h"
 
-void CWhip::Update(DWORD dt)
+void CWhip::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// Tạm thời không làm gì cả vì vị trí Whip được cập nhật thông qua Simon
 }

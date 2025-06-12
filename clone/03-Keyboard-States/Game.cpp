@@ -124,7 +124,7 @@ void CGame::Init(HWND hWnd, HINSTANCE hInstance)
 	DebugOut((wchar_t*)L"[INFO] InitDirectX has been successful\n");
 
 	this->camera = new Camera(backBufferWidth, backBufferHeight);
-	this->camera->SetLimits(0, 0, 1000, 1000);
+	this->camera->SetLimits(0, 0, 700, 700);
 
 	return;
 }
@@ -134,7 +134,7 @@ void CGame::Init(HWND hWnd, HINSTANCE hInstance)
 	NOTE: This function is very inefficient because it has to convert
 	from texture to sprite every time we need to draw it
 */
-void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect)
+void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect, float alpha)
 {
 	if (tex == NULL) return;
 
@@ -175,7 +175,9 @@ void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect)
 	sprite.TextureIndex = 0;
 
 	// The color to apply to this sprite, full color applies white.
-	sprite.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	//sprite.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	sprite.ColorModulate = D3DXCOLOR(1.0f, 1.0f, 1.0f, alpha);
+
 
 	//
 	// Build the rendering matrix based on sprite location 
@@ -390,6 +392,7 @@ void CGame::SwitchScene(int scene_id)
 	// Sau khi Load xong, key_handler của scene đã hợp lệ, bây giờ mới InitKeyboard
 	this->InitKeyboard(s->GetKeyEventHandler());
 }
+
 
 CGame::~CGame()
 {

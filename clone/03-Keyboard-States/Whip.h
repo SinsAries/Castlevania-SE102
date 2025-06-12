@@ -9,7 +9,10 @@ private:
 public:
 	CWhip(float x, float y, int nx) : CWeapon(x, y, nx) {};
 
-	void Update(DWORD dt) override;
+	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) override;
 	void UpdatePosition(float simon_x, float simon_y, int aniId, int frame, DWORD dt);
 	void Render();
+
+	float GetWidth() const override { return 0; }
+	float GetHeight() const override { return 0; }
 };

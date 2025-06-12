@@ -14,10 +14,11 @@ CSimon::CSimon(float x, float y) : CGameObject(x, y) {
 	attackCoolDown = 0;
 }
 
-void CSimon::Update(DWORD dt)
+void CSimon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	DebugOut(L"[INFO] Current state: %s\n", currentState->GetStateName());
-	currentState->Update(this, dt);
+	isOnPlatform = false;
+	currentState->Update(this, dt, coObjects);
 }
 
 
@@ -48,4 +49,27 @@ void CSimon::OnKeyDown(int KeyCode)
 void CSimon::OnKeyUp(int KeyCode)
 {
 	DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
+}
+
+
+void CSimon::OnCollisionWith(LPCOLLISIONEVENT e)
+{
+	// Handle collision with Simon
+	if (e->ny != 0 && e->obj->IsBlocking())
+	{
+		vy = 0;
+		if (e->ny < 0) isOnPlatform = true;
+	}
+	else
+		if (e->nx != 0 && e->obj->IsBlocking())
+		{
+			vx = 0;
+		}
+}
+
+void CSimon::OnNoCollision(DWORD dt)
+{
+	x += vx * dt;
+	y += vy * dt;
+	isOnPlatform = false;
 }
