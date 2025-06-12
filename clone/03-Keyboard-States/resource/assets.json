@@ -5,8 +5,8 @@
       "rect": [ 18, 92, 717, 247 ]
     },
     "brick_misc": {
-      "textureId": "MISC",
-      "rect": [ 372, 153, 387, 168 ]
+      "textureId": "BRICK",
+      "rect": [ 0, 0, 16, 16 ]
     },
 
     "simon_walk_right_1": {

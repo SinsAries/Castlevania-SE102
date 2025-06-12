@@ -68,15 +68,23 @@ void CPlayScene::Load()
 		// Trong LoadResources()
 
 		LPTEXTURE texBackground = textures->Get(static_cast<unsigned int>(TextureID::BACKGROUND)); // Hoặc texture riêng cho background
-		auto tiles = mapData["tiles"];
 		vector<int> ids;
-		for (int i = 0; i < tiles.size(); i++) {
-			sprites->Add(tiles[i][0], tiles[i][1], tiles[i][2],
-				tiles[i][3], tiles[i][4], texBackground);
-			ids.push_back(tiles[i][0]);
-		}
+
+		CONST INT TILE_SIZE = 16; // Kích thước ô lưới
+		int numY = mapData["tile_size"][1]/TILE_SIZE, numX = mapData["tile_size"][0]/TILE_SIZE;
+		DebugOut(L"[INFO] numY = %d, numX = %d\n", numY, numX);
 		int height = mapData["map"].size(); 
 		int width = mapData["map"][0].size(); // số cột
+
+
+		int begin_id = 95000 + this->sceneId * 1000;
+		ids.push_back(begin_id);
+		for(int i=0; i < numY; i++)
+			for (int j = 0; j < numX; j++) {
+				sprites->Add(begin_id, j*TILE_SIZE, i*TILE_SIZE, j*TILE_SIZE + TILE_SIZE-1, i*TILE_SIZE + TILE_SIZE-1, texBackground);
+				ids.push_back(begin_id);
+				begin_id += 1;
+			}
 
 
 		// Cấp phát động int** map
@@ -88,7 +96,7 @@ void CPlayScene::Load()
 			}
 		}
 
-		this->background = new CTiledBackground(0, 0, ids, mapArray, 32, height, width);
+		this->background = new CTiledBackground(0, 0, ids, mapArray, TILE_SIZE, height, width);
 		this->objects.push_back(this->background);
 	}
 
@@ -115,9 +123,9 @@ void CPlayScene::Load()
 			float y1 = bricksMap[i][1], y2 = bricksMap[i][3];
 			float brickWidth = bricksMap[i][4];
 			float brickHeight = bricksMap[i][5];
-			for (int i = x1; i <= x2; i += brickWidth)
+			for (int i = x1; i <= x2; i += brickHeight)
 			{
-				for (int j = y1; j <= y2; j += brickHeight)
+				for (int j = y1; j <= y2; j += brickWidth)
 				{
 					CBrick* brick = new CBrick(i, j);
 
@@ -129,7 +137,7 @@ void CPlayScene::Load()
 
 	std::map<std::string, TextureID> textureIdMap = {
 		{"SIMON", TextureID::SIMON}, {"MISC", TextureID::MISC},
-		{"BACKGROUND", TextureID::BACKGROUND}, {"FONT", TextureID::FONT}
+		{"BACKGROUND", TextureID::BACKGROUND}, {"FONT", TextureID::FONT}, {"BRICK", TextureID::BRICK}
 	};
 
 	// === 2. LOAD ASSETS (SPRITES & ANIMATIONS) ===

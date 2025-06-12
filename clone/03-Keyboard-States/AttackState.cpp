@@ -82,8 +82,6 @@ void AttackState::Update(CSimon* simon, DWORD dt, vector<LPGAMEOBJECT>* coObject
 
 	CCollision::GetInstance()->Process(simon, dt, coObjects);
 
-	simon->y += simon->vy * dt;
-
 	if (simon->isOnPlatform) {
 		//simon->y = GROUND_Y;
 		simon->vy = 0;

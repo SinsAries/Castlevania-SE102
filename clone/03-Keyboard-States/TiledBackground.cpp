@@ -9,9 +9,9 @@ void CTiledBackground::Render()
     int screenHeight = game->GetBackBufferHeight();
 
     int startCol = (int)(cx / tileWidth);
-    int endCol = (int)((cx + screenWidth) / tileWidth) + 2;
+    int endCol = (int)((cx + screenWidth) / tileWidth) + 1;
     int startRow = (int)(cy / tileHeight);
-    int endRow = (int)((cy + screenHeight) / tileHeight) + 2;
+    int endRow = (int)((cy + screenHeight) / tileHeight) + 1;
 
     for (int row = startRow; row <= endRow; ++row)
     {

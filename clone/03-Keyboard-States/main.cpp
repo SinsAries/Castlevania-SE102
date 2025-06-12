@@ -19,8 +19,8 @@ using json = nlohmann::json;
 #define MAIN_WINDOW_TITLE L"Castlevania"
 #define WINDOW_ICON_PATH L"mario.ico"
 
-#define SCREEN_WIDTH 400
-#define SCREEN_HEIGHT 285
+#define SCREEN_WIDTH 500
+#define SCREEN_HEIGHT 290
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -151,14 +151,14 @@ int WINAPI WinMain(
 
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
-	//LPSCENE scene1 = new CPlayScene(1, "resource/Scene1");
+	LPSCENE scene1 = new CPlayScene(1, "resource/Scene1");
 	LPSCENE scene2 = new CPlayScene(2, "resource/Scene2");
-	//LPSCENE scene3 = new CPlayScene(3, "resource/Scene3");
+	LPSCENE scene3 = new CPlayScene(3, "resource/Scene3");
 
 
-	//game->AddScene(scene1);
+	game->AddScene(scene1);
 	game->AddScene(scene2);
-	//game->AddScene(scene3);
+	game->AddScene(scene3);
 
 	game->SwitchScene(2);
 
