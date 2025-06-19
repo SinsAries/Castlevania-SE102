@@ -52,6 +52,24 @@
     <Filter Include="Header Files\GameObject\Weapon">
       <UniqueIdentifier>{02d9fc8c-7dc8-44dd-afa5-d295396fee24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GameObject\BreakableObject">
+      <UniqueIdentifier>{f5d5bef4-0aed-4edb-9a83-0b11afdac1b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects\BreakableObject">
+      <UniqueIdentifier>{f77d5aeb-0cc4-4d49-ad31-2668d7b985f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{329a1183-21d2-4a04-8e55-8db153299e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{11cf3d59-dcca-443c-8c15-cf3fec0aa57c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components\Move">
+      <UniqueIdentifier>{0d97f13e-5a8b-4035-861d-09fbe098cb1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components\Move">
+      <UniqueIdentifier>{218331b7-2132-43c2-a521-6f2751ad2570}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debug.cpp">
@@ -61,9 +79,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TiledBackground.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimonState.cpp">
@@ -87,13 +102,7 @@
     <ClCompile Include="Simon.cpp">
       <Filter>Source Files\GameObjects\Simon</Filter>
     </ClCompile>
-    <ClCompile Include="Weapon.cpp">
-      <Filter>Source Files\GameObjects\Weapon</Filter>
-    </ClCompile>
     <ClCompile Include="Whip.cpp">
-      <Filter>Source Files\GameObjects\Weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="Knife.cpp">
       <Filter>Source Files\GameObjects\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Quadtree.cpp">
@@ -120,9 +129,6 @@
     <ClCompile Include="Textures.cpp">
       <Filter>Source Files\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Brick.cpp">
-      <Filter>Source Files\GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
@@ -131,6 +137,75 @@
     </ClCompile>
     <ClCompile Include="PlayScene.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BreakableObject.cpp">
+      <Filter>Source Files\GameObjects\BreakableObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemSpawner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Candle.cpp">
+      <Filter>Source Files\GameObjects\BreakableObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Brick.cpp">
+      <Filter>Source Files\GameObjects\BreakableObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ColliderComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Tile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBodyComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteRendererComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="SubWeapon.cpp">
+      <Filter>Source Files\GameObjects\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponFactory.cpp">
+      <Filter>Source Files\GameObjects\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Dagger.cpp">
+      <Filter>Source Files\GameObjects\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Axe.cpp">
+      <Filter>Source Files\GameObjects\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="IMoverController.cpp">
+      <Filter>Source Files\Components\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="PlatformerController.cpp">
+      <Filter>Source Files\Components\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="KnockbackState.cpp">
+      <Filter>Source Files\GameObjects\Simon\SimonStates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -141,9 +216,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KeyEventHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TiledBackground.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimonState.h">
@@ -167,13 +239,7 @@
     <ClInclude Include="Simon.h">
       <Filter>Header Files\GameObject\Simon</Filter>
     </ClInclude>
-    <ClInclude Include="Weapon.h">
-      <Filter>Header Files\GameObject\Weapon</Filter>
-    </ClInclude>
     <ClInclude Include="Whip.h">
-      <Filter>Header Files\GameObject\Weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="Knife.h">
       <Filter>Header Files\GameObject\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Quadtree.h">
@@ -212,9 +278,6 @@
     <ClInclude Include="Textures.h">
       <Filter>Header Files\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Brick.h">
-      <Filter>Header Files\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\GameObject</Filter>
     </ClInclude>
@@ -227,6 +290,72 @@
     <ClInclude Include="PlayScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BreakableObject.h">
+      <Filter>Header Files\GameObject\BreakableObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Header Files\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemSpawner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Candle.h">
+      <Filter>Header Files\GameObject\BreakableObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Brick.h">
+      <Filter>Header Files\GameObject\BreakableObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Header Files\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBodyComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteRendererComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SubWeapon.h">
+      <Filter>Header Files\GameObject\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponFactory.h">
+      <Filter>Header Files\GameObject\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Axe.h">
+      <Filter>Header Files\GameObject\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Dagger.h">
+      <Filter>Header Files\GameObject\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="IMoverController.h">
+      <Filter>Header Files\Components\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="PlatformerController.h">
+      <Filter>Header Files\Components\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KnockbackState.h">
+      <Filter>Header Files\GameObject\Simon\SimonStates</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -237,6 +366,9 @@
       <Filter>Resource Files\json</Filter>
     </None>
     <None Include="scene_main.json">
+      <Filter>Resource Files\json</Filter>
+    </None>
+    <None Include="scene2.json">
       <Filter>Resource Files\json</Filter>
     </None>
   </ItemGroup>
@@ -257,6 +389,21 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="textures\pureblack.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\NES - Castlevania - Enemies.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\NES - Castlevania - Items &amp; Objects.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\tilesheet1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\tileset.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="textures\tileset2.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -1,98 +1,139 @@
-﻿#include "AttackState.h"
-#include "IdleState.h"
-#include "Simon.h"      // Quan trọng: Thêm Simon.h để lấy hằng số
-#include "Animations.h"
-#include "Whip.h"
-#include "Knife.h"
+﻿		#include "AttackState.h"
+		#include "IdleState.h"
+		#include "SitState.h"      // Thêm để xử lý khi đang ngồi
+		#include "Simon.h"
+		#include "Animations.h"
+		#include "Whip.h"
+		#include "RigidBodyComponent.h"
+		#include "SpriteRendererComponent.h"
+		#include "Game.h"
+		#include "PlayScene.h"
+		#include "Utils.h"
 
-// --- Hàm hỗ trợ để tránh lặp code ---
-int GetAttackAnimationId(CSimon* simon)
-{
-	if (simon->isSitting) {
-		return (simon->getNx() > 0)
-			? static_cast<int>(AnimationID::SimonSitAttackRight)
-			: static_cast<int>(AnimationID::SimonSitAttackLeft);
-	}
-	else {
-		return (simon->getNx() > 0)
-			? static_cast<int>(AnimationID::SimonStandAttackRight)
-			: static_cast<int>(AnimationID::SimonStandAttackLeft);
-	}
-}
-// ------------------------------------
+		// --- Hàm khởi tạo mới ---
+		AttackState::AttackState(bool isSubWeapon)
+		{
+			this->isSubWeaponAttack = isSubWeapon;
+			this->hasSpawnedWeapon = false; // Luôn khởi tạo là false
+			this->attackTime = CSimon::ATTACK_TIME_MS;
+		}
+
+		void AttackState::Enter(CSimon* simon)
+		{
+			simon->isAttacking = true;
+
+			// Reset lại animation tấn công để nó chạy từ đầu
+			int aniId = GetAttackAnimationId(simon);
+			if (CAnimations::GetInstance()->Get(aniId))
+			{
+				CAnimations::GetInstance()->Get(aniId)->Reset();
+			}
+
+			// Chỉ dừng di chuyển khi đang trên mặt đất
+			auto rbody = simon->GetComponent<RigidBodyComponent>();
+			if (rbody && rbody->IsGrounded())
+			{
+				rbody->SetSpeed(0, rbody->GetVy()); // Chỉ set vx=0, giữ nguyên vy để xử lý trọng lực
+			}
+		}
+
+		void AttackState::HandleInput(CSimon* simon, BYTE* states)
+		{
+			// Khi đang tấn công, Simon không nhận input di chuyển
+		}
+
+		// --- Hàm Update được nâng cấp ---
+		void AttackState::Update(CSimon* simon, DWORD dt)
+		{
+			// Luôn giảm thời gian tấn công
+			this->attackTime -= dt;
+
+			// === PHÂN LUỒNG LOGIC TẤN CÔNG ===
+			if (this->isSubWeaponAttack)
+			{
+				// --- Logic ném vũ khí phụ ---
+				if (!this->hasSpawnedWeapon)
+				{
+					auto renderer = simon->GetComponent<SpriteRendererComponent>();
+					// Chỉ ném vũ khí khi animation đạt đến frame nhất định (ví dụ frame 1)
+					if (renderer && renderer->GetAnimation()->GetCurrentFrame() == 1)
+					{
+						simon->SpawnSubWeapon();
+						this->hasSpawnedWeapon = true; // Đánh dấu đã ném để không ném lại
+					}
+				}
+			}
+			else
+			{
+				// --- Logic đánh bằng roi (như cũ) ---
+				CWhip* whip = simon->GetWhip();
+				CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+				if (whip && scene)
+				{
+					// Lấy danh sách các đối tượng có thể bị roi đánh trúng
+					const auto& static_targets = scene->GetStaticObjects();
+					whip->ProcessAttack(simon, static_targets);
+					// (Bạn có thể cần thêm cả các đối tượng động như Enemy vào đây)
+				}
+			}
 
 
-AttackState::AttackState() {
-	// Sử dụng hằng số từ CSimon
-	attackTime = CSimon::ATTACK_TIME_MS;
-	whip = new CWhip(0, 0, 1);
-}
+			// Khi hết thời gian tấn công, chuyển về trạng thái Idle hoặc Sit
+			if (this->attackTime <= 0)
+			{
+				simon->isAttacking = false;
 
-AttackState::AttackState(CSimon* simon, int type) {
-	// Sử dụng hằng số từ CSimon
-	attackTime = CSimon::ATTACK_TIME_MS;
-	if (type == 0)
-		whip = new CWhip(0, 0, 1);
-	else
-		whip = new CKnife(simon->x + 10, simon->y - 10, 1);
-}
+				// === THÊM ĐOẠN NÀY ĐỂ FIX LỖI ROI ===
+				// Nếu đây là một đòn đánh roi (không phải sub-weapon),
+				// thì phải reset roi khi kết thúc.
+				if (!this->isSubWeaponAttack)
+				{
+					if (simon->GetWhip())
+					{
+						simon->GetWhip()->Reset();
+					}
+				}
 
-AttackState::~AttackState() {
-	delete whip;
-}
+				simon->attackCoolDown = CSimon::ATTACK_COOLDOWN_MS;
+				// === KẾT THÚC PHẦN THÊM ===
 
-void AttackState::Enter(CSimon* simon)
-{
-	attackTime = CSimon::ATTACK_TIME_MS;
-	simon->isAttacking = true;
-	simon->vx = 0;
-	whip->SetDirection(simon->getNx());
+				if (simon->isSitting)
+				{
+					simon->SetState(new SitState());
+				}
+				else
+				{
+					simon->SetState(new IdleState());
+				}
+			}
+		}
 
-	// Sử dụng hàm hỗ trợ
-	int aniId = GetAttackAnimationId(simon);
-	CAnimations::GetInstance()->Get(aniId)->Reset();
-}
+		// --- Hàm Render không đổi ---
+		void AttackState::Render(CSimon* simon)
+		{
+			auto simon_renderer = simon->GetComponent<SpriteRendererComponent>();
+			if (simon_renderer)
+			{
+				int aniId = GetAttackAnimationId(simon);
+				simon_renderer->SetAnimation(CAnimations::GetInstance()->Get(aniId));
+			}
+		}
 
-void AttackState::HandleInput(CSimon* simon, BYTE* states)
-{
-	// không nhận keyboard khi đang tấn công
-}
 
-void AttackState::Update(CSimon* simon, DWORD dt)
-{
-	attackTime -= dt;
-
-	// Tính frame hiện tại
-	float progress = (float)(CSimon::ATTACK_TIME_MS - attackTime) / CSimon::ATTACK_TIME_MS;
-	int frame = min((int)(progress * 3), 2); // Giả sử animation có 3 frame
-
-	// Sử dụng hàm hỗ trợ
-	int aniId = GetAttackAnimationId(simon);
-
-	whip->UpdatePosition(simon->x, simon->y, aniId, frame, dt);
-
-	if (attackTime <= 0) {
-		simon->isAttacking = false;
-		simon->SetState(new IdleState());
-		simon->attackCoolDown = CSimon::ATTACK_COOLDOWN_MS; // Sử dụng hằng số
-		return;
-	}
-
-	// Sử dụng hằng số từ CSimon.h
-	simon->vy += CSimon::GRAVITY * dt;
-	simon->y += simon->vy * dt;
-
-	if (simon->y > CSimon::GROUND_Y) {
-		simon->y = CSimon::GROUND_Y;
-		simon->vy = 0;
-	}
-}
-
-void AttackState::Render(CSimon* simon)
-{
-	// Sử dụng hàm hỗ trợ
-	int aniId = GetAttackAnimationId(simon);
-	CAnimations::GetInstance()->Get(aniId)->Render(simon->x, simon->y);
-
-	whip->Render();
-}
+		// --- Hàm tiện ích GetAttackAnimationId ---
+		// Bạn có thể đã có hàm này ở đâu đó, nếu chưa thì đây là một ví dụ
+		int AttackState::GetAttackAnimationId(CSimon* simon)
+		{
+			if (simon->isSitting)
+			{
+				return (simon->getNx() > 0) ?
+					static_cast<int>(AnimationID::SimonSitAttackRight) :
+					static_cast<int>(AnimationID::SimonSitAttackLeft);
+			}
+			else
+			{
+				return (simon->getNx() > 0) ?
+					static_cast<int>(AnimationID::SimonStandAttackRight) :
+					static_cast<int>(AnimationID::SimonStandAttackLeft);
+			}
+		}

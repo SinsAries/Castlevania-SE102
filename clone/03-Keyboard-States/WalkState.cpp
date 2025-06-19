@@ -6,94 +6,115 @@
 #include "SitState.h"
 #include "JumpState.h"
 #include "AttackState.h"
+#include "RigidBodyComponent.h"       // <<< THÊM
+#include "SpriteRendererComponent.h" // <<< THÊM
+#include "ColliderComponent.h"
 
+// Constructor chỉ lưu lại hướng đi
 WalkState::WalkState(CSimon* simon, int direction) {
-	nx = direction;
-	simon->nx = direction;
+	this->nx = direction;
 }
 
 void WalkState::Enter(CSimon* simon)
 {
-	// Sử dụng hằng số từ CSimon.h
-	simon->vx = (nx > 0) ? CSimon::WALKING_SPEED : -CSimon::WALKING_SPEED;
+	// Cập nhật hướng của Simon
+	simon->SetNx(this->nx);
+
+	//// Ra lệnh cho RigidBody di chuyển
+	//auto rbody = simon->GetComponent<RigidBodyComponent>();
+	//if (rbody)
+	//{
+	//	float current_vy = 0;
+	//	rbody->GetSpeed(current_vy, current_vy); // Lấy vy để không ảnh hưởng việc rơi
+
+	//	// Ra lệnh cho component di chuyển theo hướng và tốc độ đi bộ
+	//	float move_speed = (this->nx > 0) ? CSimon::WALKING_SPEED : -CSimon::WALKING_SPEED;
+	//	rbody->SetSpeed(move_speed, current_vy);
+	//}
+
 	simon->isSitting = false;
 }
-
 void WalkState::HandleInput(CSimon* simon, BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
 
-	if (game->IsKeyDown(DIK_SPACE) && simon->attackCoolDown <= 0)
+	if (game->IsKeyDown(simon->keyMappings.jump) && simon->attackCoolDown <= 0)
 	{
-		simon->SetState(new AttackState(simon, 0));
+		simon->SetState(new AttackState(false));
 		return;
 	} 
-	if (game->IsKeyDown(DIK_X) && simon->attackCoolDown <= 0)
+	if (game->IsKeyDown(simon->keyMappings.subweapon) && simon->attackCoolDown <= 0)
 	{
-		simon->SetState(new AttackState(simon, 1));
+		simon->SetState(new AttackState(true));
 		return;
 	}
 
-	if (game->IsKeyDown(DIK_UP))
+	if (game->IsKeyDown(simon->keyMappings.up))
 	{
 		simon->SetState(new JumpState());
 		return;
 	}
 
-	if (game->IsKeyDown(DIK_DOWN))
+	if (game->IsKeyDown(simon->keyMappings.down))
 	{
 		simon->SetState(new SitState());
 		return;
 	}
 
-	if (!game->IsKeyDown(DIK_LEFT) && simon->vx < 0)
+	if (!game->IsKeyDown(simon->keyMappings.left) && simon->GetComponent<RigidBodyComponent>()->GetVx() < 0)
 	{
 		simon->SetState(new IdleState());
 		return;
 	}
 
-	if (!game->IsKeyDown(DIK_RIGHT) && simon->vx > 0)
+	if (!game->IsKeyDown(simon->keyMappings.right) && simon->GetComponent<RigidBodyComponent>()->GetVx() > 0)
 	{
 		simon->SetState(new IdleState());
 		return;
 	}
 
-	if (!(game->IsKeyDown(DIK_LEFT) || game->IsKeyDown(DIK_RIGHT)))
+	if (!(game->IsKeyDown(simon->keyMappings.left) || game->IsKeyDown(simon->keyMappings.right)))
 	{
 		simon->SetState(new IdleState());
 		return;
 	}
 }
 
+// Trong WalkState.cpp
 void WalkState::Update(CSimon* simon, DWORD dt)
 {
-	simon->x += simon->vx * dt;
+	// Lấy component vật lý
+	auto rbody = simon->GetComponent<RigidBodyComponent>();
+	if (rbody == nullptr) return;
 
-	// Sử dụng hằng số từ CSimon.h
-	simon->vy += CSimon::GRAVITY * dt;
-	simon->y += simon->vy * dt;
+	// Lấy vận tốc dọc hiện tại để không ảnh hưởng đến việc nhảy/rơi
+	float vx, vy;
+	rbody->GetSpeed(vx, vy);
 
-	if (simon->y > CSimon::GROUND_Y)
-	{
-		simon->y = CSimon::GROUND_Y;
-		simon->vy = 0;
-	}
+	// Xác định tốc độ di chuyển dựa trên hướng của state
+	float move_speed = (this->nx > 0)
+		? CSimon::WALKING_SPEED
+		: -CSimon::WALKING_SPEED;
 
-	// Giới hạn di chuyển trong màn hình, dùng hằng số
-	if (simon->x < 0) simon->x = 0;
-	if (simon->x > CSimon::WORLD_BOUNDARY_RIGHT) simon->x = CSimon::WORLD_BOUNDARY_RIGHT;
+	// RA LỆNH LẠI VẬN TỐC MỖI FRAME
+	// Kể cả khi va chạm ở frame trước set vx = 0, thì frame này nó sẽ được đặt lại
+	// thành tốc độ đi bộ, giúp Simon có thể "trượt" dọc theo tường.
+	rbody->SetSpeed(move_speed, vy);
 
 	simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
 }
 
+// Trong WalkState.cpp
 void WalkState::Render(CSimon* simon)
 {
+	auto renderer = simon->GetComponent<SpriteRendererComponent>();
+	if (renderer == nullptr) return;
+
 	int aniId;
-	// Sử dụng enum class AnimationID
-	if (nx > 0)
+	if (this->nx > 0)
 		aniId = static_cast<int>(AnimationID::SimonWalkRight);
 	else
 		aniId = static_cast<int>(AnimationID::SimonWalkLeft);
 
-	CAnimations::GetInstance()->Get(aniId)->Render(simon->x, simon->y);
+	renderer->SetAnimation(CAnimations::GetInstance()->Get(aniId));
 }

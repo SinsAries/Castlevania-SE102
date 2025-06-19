@@ -1,15 +1,30 @@
-#pragma once
-#include "Weapon.h"
-#include "Animations.h"
+﻿// Whip.h - PHIÊN BẢN MỚI, GỌN GÀNG HƠN
 
-class CWhip : public CWeapon
+#pragma once
+#include "GameObject.h"
+#include "GameIDs.h"
+
+// Forward declaration để Whip biết Simon là ai mà không cần include đầy đủ
+class CSimon;
+
+class CWhip : public CGameObject
 {
 private:
-	int dx[3], dy[3];
-public:
-	CWhip(float x, float y, int nx) : CWeapon(x, y, nx) {};
+    vector<LPGAMEOBJECT> hit_objects;
 
-	void Update(DWORD dt) override;
-	void UpdatePosition(float simon_x, float simon_y, int aniId, int frame, DWORD dt);
-	void Render();
+public:
+    CWhip();
+    virtual ~CWhip() {}
+
+    /**
+     * @brief Hàm duy nhất điều khiển toàn bộ hành vi của roi trong 1 frame tấn công.
+     * @param owner Con trỏ đến Simon, để roi biết vị trí và trạng thái của chủ nhân.
+     * @param targets Danh sách các đối tượng có thể bị roi đánh trúng.
+     */
+    void ProcessAttack(CSimon* owner, const vector<LPGAMEOBJECT>& targets);
+
+    /**
+     * @brief Reset roi về trạng thái ban đầu (ẩn, vô hại).
+     */
+    void Reset();
 };

@@ -20,10 +20,10 @@ public:
 	
 	CSprite(int id, int left, int top, int right, int bottom, LPTEXTURE tex);
 
-	void Draw(float x, float y);
+	void Draw(float x, float y, int nx = 1);
 
-	int GetWidth() { return right - left; }
-	int GetHeight() { return bottom - top; }
+	int GetWidth() { return right - left + 1; }
+	int GetHeight() { return bottom - top + 1; }
 	int GetLeft() { return left; }
 	int GetTop() { return top; }
 	int GetRight() { return right; }

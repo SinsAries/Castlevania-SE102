@@ -1,4 +1,4 @@
-#include <Windows.h>
+﻿#include <Windows.h>
 
 #include "debug.h"
 #include "Game.h"
@@ -22,9 +22,20 @@ void CTextures::Add(int id, LPCWSTR filePath)
 	textures[id] = CGame::GetInstance()->LoadTexture(filePath);
 }
 
-LPTEXTURE CTextures::Get(unsigned int i)
+LPTEXTURE CTextures::Get(int i)
 {
-	return textures[i];
+    // Dùng .find() để tìm kiếm an toàn
+    auto it = textures.find(i);
+
+    // Nếu tìm không thấy
+    if (it == textures.end())
+    {
+        DebugOut(L"[ERROR] Texture with ID %d not found!\n", i);
+        return nullptr; // Trả về nullptr một cách tường minh
+    }
+
+    // Nếu tìm thấy, trả về texture
+    return it->second;
 }
 
 

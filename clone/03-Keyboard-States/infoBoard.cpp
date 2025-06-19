@@ -1,124 +1,129 @@
 ﻿#include <iomanip>
 #include <sstream>
 
-#include "infoBoard.h"
-#include "font.h"
-#include "Sprites.h"
-#include "GameIDs.h"
+#include "Simon.h"
+#include "PlayScene.h"
+#include "InfoBoard.h"
+#include "font.h"       // Cần để dùng CFont
+#include "Game.h"       // Cần để lấy Camera và các thông tin game
+#include "GameIDs.h"    // Cần để lấy SpriteID
 
+// Hàm tiện ích để format số (ví dụ: 5 -> "05", 100 -> "000100")
 std::string FormatNumber(int num, int width) {
 	std::stringstream ss;
 	ss << std::setw(width) << std::setfill('0') << num;
 	return ss.str();
 }
 
-CInfoBoard::CInfoBoard()
+
+// --- HÀM KHỞI TẠO MỚI ---
+CInfoBoard::CInfoBoard(CSimon* player, CPlayScene* scene)
 {
-	score = 0;
-	time = 400;
-	stage = 1;
-	playerHealth = HEALTH_BAR_TICKS;
-	enemyHealth = HEALTH_BAR_TICKS;
-	playerLives = 3;
+	this->player = player;
+	this->scene = scene;
 
-	font_renderer = CFont::GetInstance();
+	// Lấy các tài nguyên sprite cần thiết từ singleton
+	CSprites* sprites = CSprites::GetInstance();
+	this->black_background = sprites->Get(static_cast<int>(SpriteID::UI_Black_Background));
+	this->health_tick_red = sprites->Get(static_cast<int>(SpriteID::UI_Health_Red));
+	this->health_tick_white = sprites->Get(static_cast<int>(SpriteID::UI_Health_White));
+	this->heart_icon = sprites->Get(static_cast<int>(SpriteID::UI_Heart));
 
-	black_background = CSprites::GetInstance()->Get(static_cast<int>(SpriteID::UI_Black_Background));
-	health_tick_red = CSprites::GetInstance()->Get(static_cast<int>(SpriteID::UI_Health_Red));
-	health_tick_white = CSprites::GetInstance()->Get(static_cast<int>(SpriteID::UI_Health_White));
-	heart_icon = CSprites::GetInstance()->Get(static_cast<int>(SpriteID::UI_Heart));
+	// Sử dụng singleton Font để vẽ chữ
+	this->font_renderer = CFont::GetInstance();
 }
 
-CInfoBoard::~CInfoBoard() {}
-
-void CInfoBoard::Update(int score, int time, int stage, int playerHealth, int enemyHealth, int lives)
+CInfoBoard::~CInfoBoard()
 {
-	this->score = score;
-	this->time = time;
-	this->stage = stage;
-	this->playerHealth = playerHealth;
-	this->enemyHealth = enemyHealth;
-	this->playerLives = lives;
+	// Không cần delete font_renderer vì nó là singleton
 }
+
+// Trong infoBoard.cpp
 
 void CInfoBoard::Render()
 {
-	// Lấy vị trí camera để vẽ UI tương đối theo nó
+	// Nếu không có player hoặc scene thì không vẽ gì cả
+	if (player == nullptr || scene == nullptr) return;
+
+	// --- BƯỚC 1: "KÉO" (PULL) DỮ LIỆU MỚI NHẤT ---
+	int score = player->GetScore();
+	int time = scene->GetTime();
+	int stage = scene->GetStageNumber();
+	int playerHealth = player->GetHealth();
+	int playerMaxHealth = player->GetMaxHealth();
+	int enemyHealth = 16; // Tạm thời hardcode máu của enemy
+	int enemyMaxHealth = 16;
+	int lives = player->GetLives();
+	int hearts = player->GetHearts();
+
+	// --- BƯỚC 2: VẼ GIAO DIỆN VỚI TỌA ĐỘ ĐÃ CĂN CHỈNH ---
 	CGame* game = CGame::GetInstance();
 	float cam_x, cam_y;
 	game->GetCamera()->GetPosition(cam_x, cam_y);
 
-	// Lấy kích thước màn hình để căn lề
-	int screen_width = game->GetBackBufferWidth();
-	// int screen_height = game->GetBackBufferHeight(); // Dùng nếu cần căn theo chiều dọc
-
-	// 1. Vẽ nền đen
-	// Vẽ một sprite 1x1 được scale ra toàn bộ chiều rộng màn hình và cao 40 pixel
+	// Vẽ nền đen cho UI
 	if (black_background)
 		black_background->Draw(cam_x, cam_y);
 
-	// 2. Vẽ các dòng text
-	// Các giá trị 8, 14, 24 là khoảng cách lề (padding) so với góc trên-trái của màn hình
-	float text_base_x = cam_x + 8;
-	float text_row1_y = cam_y + 18;
-	float text_row2_y = cam_y + 36;
-	float text_row3_y = cam_y + 54;
-	float text_row4_y = cam_y + 72;
+	// --- Tinh chỉnh lại tọa độ và bố cục ---
+	// Các giá trị này được căn chỉnh để giống với game gốc hơn
+	// Bạn có thể tự do thay đổi các con số này để đạt độ chính xác pixel
+	float text_row1_y = cam_y + 7;
+	float text_row2_y = cam_y + 23;
+	float text_row3_y = cam_y + 39;
 
-	// Dòng 1: SCORE và TIME
-	std::string score_str = "SCORE-" + FormatNumber(score, 6);
-	std::string time_str = "TIME-" + FormatNumber(time, 4);
-	font_renderer->Draw(text_base_x, text_row1_y, score_str);
-	font_renderer->Draw(text_base_x + 200, text_row1_y, time_str); // Cách score 120px
+	float score_x = cam_x + 16;
+	float time_x = cam_x + 224;
+	float stage_x = cam_x + 400;
 
-	// Dòng 1: STAGE (Căn lề phải)
-	std::string stage_str = "STAGE-" + FormatNumber(1, 2);
-	float stage_text_width = stage_str.length() * 15; // Giả sử mỗi ký tự rộng 8px
-	float stage_x = cam_x + screen_width - stage_text_width - 8; // Căn lề phải 8px
-	font_renderer->Draw(stage_x, text_row1_y, stage_str);
+	float label_x = cam_x + 16;
+	float health_bar_x = cam_x + 122;
 
-	// Dòng 2 & 3: PLAYER, ENEMY và thanh máu
-	font_renderer->Draw(text_base_x, text_row2_y, "PLAYER");
-	font_renderer->Draw(text_base_x, text_row3_y, "ENEMY");
+	float right_hud_x = cam_x + 300;
 
-	float health_x_start = text_base_x + 90; // Vị trí bắt đầu của thanh máu
-	for (int i = 0; i < HEALTH_BAR_TICKS; i++)
+	// Dòng 1: SCORE, TIME, STAGE
+	font_renderer->Draw(score_x, text_row1_y, "SCORE-" + FormatNumber(score, 6));
+	font_renderer->Draw(time_x, text_row1_y, "TIME-" + FormatNumber(time, 4));
+	font_renderer->Draw(stage_x, text_row1_y, "STAGE-" + FormatNumber(stage, 2));
+
+	// Dòng 2: PLAYER và thanh máu
+	font_renderer->Draw(label_x, text_row2_y, "PLAYER");
+	RenderHealthBar(health_bar_x, text_row2_y, playerHealth, playerMaxHealth);
+
+	// Dòng 3: ENEMY và thanh máu
+	font_renderer->Draw(label_x, text_row3_y, "ENEMY");
+	RenderHealthBar(health_bar_x, text_row3_y, enemyHealth, enemyMaxHealth); // Tạm thời hardcode máu enemy
+
+	// Cụm thông tin bên phải
+	if (heart_icon) heart_icon->Draw(right_hud_x, text_row2_y);
+	font_renderer->Draw(right_hud_x + 24, text_row2_y, "-" + FormatNumber(hearts, 2));
+	font_renderer->Draw(right_hud_x, text_row3_y, "P-" + FormatNumber(lives, 2));
+
+	// Bạn có thể vẽ ô vũ khí phụ ở đây
+	// ví dụ: subweapon_box_sprite->Draw(right_hud_x + 90, text_row2_y);
+}
+
+// --- HÀM TIỆN ÍCH ĐỂ VẼ THANH MÁU ---
+void CInfoBoard::RenderHealthBar(float x, float y, int currentHealth, int maxHealth)
+{
+	for (int i = 0; i < maxHealth; i++)
 	{
-		float tick_x = health_x_start + i * 8;
-		int tick_width = 4;
-		int tick_height = 8;
+		// Mỗi vạch máu rộng 5px, cách nhau 1px
+		float tick_x = x + i * (5 + 1);
 
-		// Máu người chơi
-		if (i < this->playerHealth) {
-			health_tick_red->Draw(tick_x, text_row2_y);
-			health_tick_red->Draw(tick_x + 2, text_row2_y);
-			health_tick_red->Draw(tick_x + 4, text_row2_y);
+		if (i < currentHealth)
+		{
+			if (health_tick_red) health_tick_red->Draw(tick_x, y);
 		}
-		else {
-			health_tick_white->Draw(tick_x, text_row2_y);
-			health_tick_white->Draw(tick_x + 2, text_row2_y);
-			health_tick_white->Draw(tick_x + 4, text_row2_y);
-		}
-
-		// Máu kẻ địch
-		if (i < this->enemyHealth) {
-			health_tick_red->Draw(tick_x, text_row3_y);
-			health_tick_red->Draw(tick_x + 2, text_row3_y);
-			health_tick_red->Draw(tick_x + 4, text_row3_y);
-		}
-		else {
-			health_tick_white->Draw(tick_x, text_row3_y);
-			health_tick_white->Draw(tick_x + 2, text_row3_y);
-			health_tick_white->Draw(tick_x + 4, text_row3_y);
+		else
+		{
+			if (health_tick_white) health_tick_white->Draw(tick_x, y);
 		}
 	}
+} // <--- DẤU NGOẶC NHỌN "}" BỊ THIẾU CỦA BẠN NẰM Ở ĐÂY
 
-	// 4. Vẽ mạng và sub-weapon
-	heart_icon->Draw(cam_x + 335, text_row2_y);
-	font_renderer->Draw(cam_x + 350, text_row2_y, "-");
-	font_renderer->Draw(cam_x + 365, text_row2_y, FormatNumber(score, 2)); // Vẽ số mạng
-	font_renderer->Draw(cam_x + 335, text_row3_y, "P-" + FormatNumber(playerLives, 2));
-
-	// Tương tự, vẽ ô sub-weapon ở đây
-	// Ví dụ: subweapon_box->Draw(cam_x + 240, cam_y + 14);
+// Hàm này bạn có thể cài đặt sau
+void CInfoBoard::RenderSubWeaponIcon(float x, float y)
+{
+	// ...
 }

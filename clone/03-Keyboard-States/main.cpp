@@ -19,8 +19,8 @@ using json = nlohmann::json;
 #define MAIN_WINDOW_TITLE L"Castlevania"
 #define WINDOW_ICON_PATH L"mario.ico"
 
-#define SCREEN_WIDTH 540
-#define SCREEN_HEIGHT 405
+#define SCREEN_WIDTH 576
+#define SCREEN_HEIGHT 300
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -120,15 +120,17 @@ int Run()
 		{
 			frameStart = now;
 
+			// <<< THAY ĐỔI THỨ TỰ
+			// 1. Đọc trạng thái bàn phím trước
+			game->ProcessKeyboard();
+
+			// 2. Cập nhật Scene (Scene::Update sẽ dùng trạng thái bàn phím vừa đọc)
 			LPSCENE currentScene = game->GetCurrentScene();
 			if (currentScene != nullptr)
 			{
 				currentScene->Update((DWORD)dt);
-				game->ProcessKeyboard();
 				currentScene->Render();
 			}
-
-			// --------------------------
 		}
 		else
 			Sleep((DWORD)(tickPerFrame - dt));
@@ -136,6 +138,7 @@ int Run()
 
 	return 1;
 }
+
 int WINAPI WinMain(
 	_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,
@@ -151,9 +154,11 @@ int WINAPI WinMain(
 
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
-	LPSCENE mainScene = new CPlayScene(1, "scene_main.json");
+	LPSCENE scene1 = new CPlayScene(1, "scene_main.json");
+	//LPSCENE scene2 = new CPlayScene(2, "scene2.json");
 
-	game->AddScene(mainScene);
+	game->AddScene(scene1);
+	//game->AddScene(scene2);
 
 	game->SwitchScene(1);
 

@@ -41,7 +41,6 @@ class CGame
 	BYTE  keyStates[KEYBOARD_STATE_SIZE];			// DirectInput keyboard state buffer 
 	DIDEVICEOBJECTDATA keyEvents[KEYBOARD_BUFFER_SIZE];		// Buffered keyboard data
 
-	LPKEYEVENTHANDLER keyHandler;
 	Camera* camera;
 
 	HINSTANCE hInstance;
@@ -50,6 +49,21 @@ class CGame
 	int current_scene_id;
 
 public:
+	static void SweptAABB(
+		float ml,			// move left 
+		float mt,			// move top
+		float mr,			// move right 
+		float mb,			// move bottom
+		float dx,			// 
+		float dy,			// 
+		float sl,			// static left
+		float st,
+		float sr,
+		float sb,
+		float& t,
+		float& nx,
+		float& ny);
+
 	// Init DirectX, Sprite Handler
 	void Init(HWND hWnd, HINSTANCE hInstance);
 
@@ -72,9 +86,10 @@ public:
 	LPTEXTURE LoadTexture(LPCWSTR texturePath);
 
 	// Keyboard related functions 
-	void InitKeyboard(LPKEYEVENTHANDLER handler);
+	void InitKeyboard();
 	int IsKeyDown(int KeyCode);
 	void ProcessKeyboard();
+	BYTE* GetKeyStates() { return this->keyStates; }
 
 	ID3D10Device* GetDirect3DDevice() { return this->pD3DDevice; }
 	IDXGISwapChain* GetSwapChain() { return this->pSwapChain; }
@@ -94,6 +109,7 @@ public:
 
 	void AddScene(LPSCENE scene);
 	LPSCENE GetCurrentScene() { return scenes[current_scene_id]; }
+	int GetSceneId() { return this->current_scene_id; }
 	void SwitchScene(int scene_id);
 
 	~CGame();

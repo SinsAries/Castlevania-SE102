@@ -1,19 +1,11 @@
-#pragma once
-
+﻿#pragma once
 #include "GameObject.h"
-#include "Animation.h"
-#include "Animations.h"
-#include "GameIDs.h"
 
-class CBrick : public CGameObject {
+class CBrick : public CGameObject
+{
 public:
-	// === GAMEPLAY CONSTANTS ===
-	static constexpr int BRICK_WIDTH = 16;
-	static constexpr float BRICK_X = 0.0f;
-	static constexpr float BRICK_Y = 180.0f;
+	CBrick(float x, float y);
+	virtual ~CBrick() {}
 
-	// === METHODS ===
-	CBrick(float x, float y) : CGameObject(x, y) {}
-	void Render();
-	void Update(DWORD dt) {}
+	// Gạch thường không cần Update hay Render riêng, CGameObject sẽ lo
 };

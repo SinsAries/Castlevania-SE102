@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <unordered_map>
 #include <d3dx10.h>
 
@@ -18,7 +18,7 @@ class CTextures
 public:
 	CTextures();
 	void Add(int id, LPCWSTR filePath);
-	LPTEXTURE Get(unsigned int i);
+	LPTEXTURE Get(int i); // Đổi thành int
 
 	static CTextures* GetInstance();
 };

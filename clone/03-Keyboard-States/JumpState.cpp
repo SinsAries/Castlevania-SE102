@@ -6,57 +6,93 @@
 #include "SitState.h"
 #include "JumpState.h"
 #include "AttackState.h"
+#include "RigidBodyComponent.h"       // <<< THÊM
+#include "SpriteRendererComponent.h" // <<< THÊM
+
+// JumpState.cpp
 
 void JumpState::Enter(CSimon* simon)
 {
-	if (simon->y == CSimon::GROUND_Y)
-	{
-		simon->vy = -CSimon::JUMP_SPEED_Y;
-	}
-	simon->isSitting = false;
+    auto rbody = simon->GetComponent<RigidBodyComponent>();
+    if (rbody == nullptr) return;
+
+    // SỬA LẠI ĐIỀU KIỆN: Chỉ cho phép nhảy khi component báo đã chạm đất
+    if (rbody->IsGrounded())
+    {
+        // Lệnh nhảy vẫn giữ nguyên, rất tốt!
+        float current_vx, current_vy;
+        rbody->GetSpeed(current_vx, current_vy);
+        rbody->SetSpeed(current_vx, -CSimon::JUMP_SPEED_Y);
+        simon->isSitting = false; // Đảm bảo không ở trạng thái ngồi khi nhảy
+        rbody->SetGrounded(false);
+    }
+    else
+    {
+        // Nếu đang ở trên không mà vào state này (ví dụ do bị đẩy lùi và rơi xuống)
+        // thì không làm gì cả, cứ để nó rơi tự nhiên.
+        // Ta không muốn có thể "double jump" hoặc nhảy trên không.
+    }
 }
 
 void JumpState::HandleInput(CSimon* simon, BYTE* states)
 {
 	CGame* game = CGame::GetInstance();
 
-	if (game->IsKeyDown(DIK_SPACE) && simon->attackCoolDown <= 0)
+	if (game->IsKeyDown(simon->keyMappings.jump) && simon->attackCoolDown <= 0)
 	{
-		simon->SetState(new AttackState(simon, 0));
+		simon->SetState(new AttackState(false));
 		return;
 	}
-	else if (game->IsKeyDown(DIK_X) && simon->attackCoolDown <= 0)
+	else if (game->IsKeyDown(simon->keyMappings.subweapon) && simon->attackCoolDown <= 0)
 	{
-		simon->SetState(new AttackState(simon, 1));
+		simon->SetState(new AttackState(true));
 		return;
 	}
 }
 
+// JumpState.cpp
+
 void JumpState::Update(CSimon* simon, DWORD dt)
 {
-	simon->vy += CSimon::GRAVITY * dt;
-	simon->y += simon->vy * dt;
+    auto rbody = simon->GetComponent<RigidBodyComponent>();
+    if (rbody == nullptr) return;
 
-	if (simon->y > CSimon::GROUND_Y)
-	{
-		simon->y = CSimon::GROUND_Y;
-		simon->vy = 0;
-		simon->SetState(new IdleState());
-	}
-	simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
+    // THÊM DÒNG NÀY ĐỂ ĐIỀU TRA
+    DebugOut(L"[JUMP STATE] Vy: %f, IsGrounded: %d\n", rbody->GetVy(), rbody->IsGrounded());
+
+    // Kiểm tra điều kiện đáp đất để chuyển state
+    // Chỉ cần kiểm tra IsGrounded là đủ. Khi component vật lý báo chạm đất,
+    // tức là đã kết thúc trạng thái nhảy/rơi.
+    if (rbody->IsGrounded())
+    {
+        // Để chắc chắn, ta có thể đặt lại vận tốc Y về 0
+        float current_vx, current_vy;
+        rbody->GetSpeed(current_vx, current_vy);
+        rbody->SetSpeed(current_vx, 0);
+
+        simon->SetState(new IdleState());
+        return;
+    }
+
+    simon->attackCoolDown = max(0, simon->attackCoolDown - dt);
 }
 
 void JumpState::Render(CSimon* simon)
 {
-	int aniId;
-	// Sử dụng enum class AnimationID
-	// Lưu ý: animation ngồi và nhảy của bạn đang dùng chung sprite
-	// nên tên ID có thể hơi khác, ở đây tôi dùng SimonJumpRight/Left
-	// cho rõ ràng, bạn cần đảm bảo ID này có trong GameIDs.h
-	if (simon->nx >= 0)
-		aniId = static_cast<int>(AnimationID::SimonSitRight);
-	else
-		aniId = static_cast<int>(AnimationID::SimonSitLeft);
+    // Lấy renderer của Simon
+    auto renderer = simon->GetComponent<SpriteRendererComponent>();
+    if (renderer == nullptr) return;
 
-	CAnimations::GetInstance()->Get(aniId)->Render(simon->x, simon->y);
+    // Ra lệnh cho renderer phải dùng animation nào
+    int aniId;
+    
+    // Khi nhảy, Simon sẽ co người lại, dùng animation ngồi là hợp lý
+    // Nếu bạn có animation nhảy riêng (ví dụ SimonJumpRight) thì dùng nó
+    if (simon->getNx() > 0)
+        aniId = static_cast<int>(AnimationID::SimonSitRight); // Hoặc SimonJumpRight
+    else
+        aniId = static_cast<int>(AnimationID::SimonSitLeft);  // Hoặc SimonJumpLeft
+
+    // Gán animation cho renderer, việc vẽ sẽ do PlayScene đảm nhiệm
+    renderer->SetAnimation(CAnimations::GetInstance()->Get(aniId));
 }

@@ -18,7 +18,7 @@ Camera::Camera(int screenWidth, int screenHeight)
 void Camera::FollowSimon(float simonX, float simonY)
 {
     this->x = simonX - width / 2;
-    this->y = simonY - height / 2;
+    this->y = simonY - (height - 32);
 
     // Giới hạn Camera theo min/max đã đặt
     if (this->x < limitMinX) this->x = limitMinX;
@@ -38,4 +38,12 @@ void Camera::SetLimits(float minX, float minY, float maxX, float maxY) {
     limitMinY = minY;
     limitMaxX = maxX;
     limitMaxY = maxY;
+}
+
+void Camera::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+{
+    left = this->x;
+    top = this->y;
+    right = this->x + this->width;
+    bottom = this->y + this->height;
 }

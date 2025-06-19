@@ -14,4 +14,6 @@ public:
     void GetPosition(float& outX, float& outY) const; // Lấy vị trí Camera
 
     void SetLimits(float minX, float minY, float maxX, float maxY); // Giới hạn Camera
+
+    void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 };

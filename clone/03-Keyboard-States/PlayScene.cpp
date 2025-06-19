@@ -10,6 +10,16 @@
 #include "Brick.h"
 #include "KeyEventHandler.h"
 #include "infoBoard.h"
+#include "GameUtils.h" // <--- THÊM DÒNG NÀY
+#include "Candle.h"
+#include "ItemSpawner.h"
+#include "BreakableObject.h" // Thêm để có thể dynamic_cast
+#include "Item.h"
+#include "ColliderComponent.h"
+#include "RigidBodyComponent.h"
+#include "Tile.h"
+#include "Utils.h"
+#include <dinput.h>
 
 using json = nlohmann::json;
 
@@ -19,15 +29,15 @@ extern std::wstring s2ws(const std::string& s);
 CPlayScene::CPlayScene(int id, std::string filePath) : CScene(id)
 {
 	this->sceneFilePath = filePath;
-	this->player = nullptr;
-	this->background = nullptr;
-	this->quadtree = nullptr;
+	this->players.clear();
+	this->grid = nullptr;
 	this->key_handler = nullptr;
 	this->board = nullptr;
 
 	this->score = 0;
-	this->game_time = 400;
+	this->game_time = 300;
 	this->stage_number = 1;
+	this->last_tick_count = 0;	
 }
 
 void CPlayScene::Load()
@@ -45,6 +55,8 @@ void CPlayScene::Load()
 	}
 	json data = json::parse(f);
 
+
+
 	std::string textures_path = data["textures_file"];
 	std::string assets_path = data["assets_file"];
 
@@ -52,7 +64,9 @@ void CPlayScene::Load()
 	DebugOut(L"[INFO] Loading textures from %hs\n", textures_path.c_str());
 	std::map<std::string, TextureID> textureIdMap = {
 		{"SIMON", TextureID::SIMON}, {"MISC", TextureID::MISC},
-		{"BACKGROUND", TextureID::BACKGROUND}, {"FONT", TextureID::FONT}
+		{"BACKGROUND", TextureID::BACKGROUND}, {"FONT", TextureID::FONT},
+		{"BLACK", TextureID::BLACK},
+		{"TILESET_1", TextureID::TILESET_1},
 	};
 	try {
 		std::ifstream f_textures(textures_path);
@@ -83,6 +97,13 @@ void CPlayScene::Load()
 			for (int i = 0; i < 26; i++) masterSpriteIdMap["font_" + std::string(1, 'A' + i)] = static_cast<int>(SpriteID::Font_A) + i;
 			for (int i = 0; i < 10; i++) masterSpriteIdMap["font_" + std::string(1, '0' + i)] = static_cast<int>(SpriteID::Font_0) + i;
 			masterSpriteIdMap["font_symbol_-"] = static_cast<int>(SpriteID::Font_Symbol_Dash);
+			// --- Item sprites/animations ---
+			/*masterSpriteIdMap["large_heart"] = static_cast<int>(AnimationID::ItemLargeHeartFloat);
+			masterSpriteIdMap["small_heart"] = static_cast<int>(AnimationID::ItemSmallHeartFloat);
+			masterSpriteIdMap["money_bag_red"] = static_cast<int>(AnimationID::ItemMoneyBagRed);
+			masterSpriteIdMap["money_bag_purple"] = static_cast<int>(AnimationID::ItemMoneyBagPurple);
+			masterSpriteIdMap["money_bag_yellow"] = static_cast<int>(AnimationID::ItemMoneyBagYellow);*/
+			masterSpriteIdMap["brick_stage0"] = static_cast<int>(SpriteID::BRICK_GROUND_STYLE_1);
 		}
 
 		for (auto& sprite_element : data_assets["sprites"].items()) {
@@ -113,18 +134,49 @@ void CPlayScene::Load()
 			{"SimonStandAttackRight", AnimationID::SimonStandAttackRight}, {"SimonStandAttackLeft", AnimationID::SimonStandAttackLeft},
 			{"SimonSitAttackRight", AnimationID::SimonSitAttackRight}, {"SimonSitAttackLeft", AnimationID::SimonSitAttackLeft},
 			{"WeaponWhipLeft", AnimationID::WeaponWhipLeft}, {"WeaponWhipRight", AnimationID::WeaponWhipRight},
-			{"WeaponKnifeLeft", AnimationID::WeaponKnifeLeft}, {"WeaponKnifeRight", AnimationID::WeaponKnifeRight},
-			{"Brick", AnimationID::Brick}
+			{"WeaponDaggerRight", AnimationID::WeaponDaggerRight}, {"WeaponDaggerLeft", AnimationID::WeaponDaggerLeft},
+			{"Brick", AnimationID::Brick}, {"GroundCandle", AnimationID::GroundCandle}, {"WallCandle",  AnimationID::WallCandle},
+			{"ItemLargeHeartFloat", AnimationID::ItemLargeHeartFloat},
+			{"ItemSmallHeartFloat", AnimationID::ItemSmallHeartFloat},
+			{"ItemMoneyBagRed", AnimationID::ItemMoneyBagRed},
+			{"ItemMoneyBagPurple", AnimationID::ItemMoneyBagPurple},
+			{"ItemMoneyBagYellow", AnimationID::ItemMoneyBagYellow},
+			{"ItemRosarySpin", AnimationID::ItemRosarySpin},
+			{"ItemDagger", AnimationID::ItemDagger}
+			// Thêm các animation khác vào đây nếu cần
 		};
+
 		for (auto& anim_element : data_assets["animations"].items()) {
 			std::string animIdStr = anim_element.key();
 			json animData = anim_element.value();
-			int frameTime = animData["defaultFrameTime"];
-			LPANIMATION ani = new CAnimation(frameTime);
-			for (const auto& spriteIdJson : animData["spriteIds"]) {
-				std::string spriteIdStr = spriteIdJson.get<std::string>();
-				ani->Add(sprite_registry_for_animation[spriteIdStr]);
+
+			// Kiểm tra xem animation có tồn tại trong map không trước khi tiếp tục
+			if (animationIdMap.find(animIdStr) == animationIdMap.end()) {
+				continue; // Bỏ qua nếu không có trong map
 			}
+
+			int defaultFrameTime = animData["defaultFrameTime"];
+			LPANIMATION ani = new CAnimation(defaultFrameTime);
+
+			// Chỉ xử lý nếu có key "frames"
+			if (animData.contains("frames"))
+			{
+				// Vòng lặp mới đọc cấu trúc "frames"
+				for (const auto& frameData : animData["frames"]) {
+					// Lấy spriteId (bắt buộc)
+					std::string spriteIdStr = frameData["spriteId"].get<std::string>();
+					int sprite_id_int = sprite_registry_for_animation[spriteIdStr];
+
+					// Lấy các giá trị tùy chọn. Nếu không có trong JSON, dùng giá trị mặc định.
+					int frame_time = frameData.value("time", defaultFrameTime);
+					int anchor_x = frameData.value("anchorX", 0);
+					int anchor_y = frameData.value("anchorY", 0);
+
+					// Gọi hàm Add đã được nâng cấp của CAnimation
+					ani->Add(sprite_id_int, frame_time, anchor_x, anchor_y);
+				}
+			}
+
 			animations->Add(static_cast<int>(animationIdMap[animIdStr]), ani);
 		}
 	}
@@ -132,58 +184,249 @@ void CPlayScene::Load()
 		DebugOut(L"[ERROR] JSON parse error in %hs: %hs\n", assets_path.c_str(), e.what());
 		return;
 	}
+	
+	// === 3. KHỞI TẠO GRID ===
+	DebugOut(L"[INFO] Initializing Grid...\n");
+	int map_width = data["map_info"]["width"];
+	int map_height = data["map_info"]["height"];
+	this->grid = CGrid::GetInstance();
+	this->grid->Init(map_width, map_height);
+	CGame* game = CGame::GetInstance();
+	Camera* cam = game->GetCamera();
+	//int screen_width = game->GetBackBufferWidth();
 
-	// === 3. LOAD SCENE OBJECTS ===
-	DebugOut(L"[INFO] Loading scene objects...\n");
-	this->quadtree = new Quad(0, Point(0, 0), Point(1000, 1000));
+	// Giới hạn camera theo chiều ngang.
+	// Giới hạn bên phải là chiều rộng của map trừ đi chiều rộng màn hình.
+	// Giới hạn dọc tạm thời không xét.
+	//cam->SetLimits(0, 0, map_width - 576, 0);
+
+	// Trong CPlayScene::Load()
+
+// === 4. LOAD TILE MAP (PHIÊN BẢN AN TOÀN) ===
+	DebugOut(L"[INFO] Loading tile map...\n");
+	if (data.contains("tile_map"))
+	{
+		json tileMapData = data["tile_map"];
+		std::string tilesetTexIdStr = tileMapData["tileset_texture_id"];
+		int tile_width = tileMapData["tile_width"];
+		int tile_height = tileMapData["tile_height"];
+
+		// Bước 1: Lấy đối tượng CTexture* wrapper
+		LPTEXTURE tileset_texture_wrapper = textures->Get(static_cast<int>(textureIdMap[tilesetTexIdStr]));
+
+		// Bước 2: Kiểm tra an toàn xem wrapper có null không
+		if (tileset_texture_wrapper == nullptr)
+		{
+			DebugOut(L"[FATAL ERROR] Tileset texture wrapper is NULL for key '%hs'. Check previous logs.\n", tilesetTexIdStr.c_str());
+			return;
+		}
+
+		// Bước 3: Lấy con trỏ DirectX thô từ wrapper
+		ID3D10Texture2D* raw_texture = tileset_texture_wrapper->getTexture2D();
+
+		// Bước 4: Kiểm tra an toàn con trỏ thô
+		if (raw_texture == nullptr)
+		{
+			DebugOut(L"[FATAL ERROR] The raw DirectX texture is NULL inside the wrapper.\n");
+			return;
+		}
+
+		// Bước 5: Bây giờ mới gọi GetDesc một cách an toàn
+		D3D10_TEXTURE2D_DESC texDesc;
+		raw_texture->GetDesc(&texDesc);
+		int tileset_cols = texDesc.Width / tile_width;
+
+		json layout = tileMapData["layout"];
+		for (size_t i = 0; i < layout.size(); i++) {
+			for (size_t j = 0; j < layout[i].size(); j++) {
+				int tile_index = layout[i][j].get<int>();
+				
+				if (tile_index == -1) continue;
+
+				int l = (tile_index % tileset_cols) * tile_width;
+				int t = (tile_index / tileset_cols) * tile_height;
+				int r = l + tile_width;
+				int b = t + tile_height;
+
+				DebugOut(L"%d %d %d %d %d\n", tile_index, l, t, r, b);
+
+				// Truyền con trỏ wrapper vào CTile
+				CTile* tile = new CTile((float)j * tile_width, (float)i * tile_height + 85, l, t, r, b, tileset_texture_wrapper);
+				tiles.push_back(tile);
+			}
+			DebugOut(L"\n");
+		}
+	}
+
+
+	// === 5. LOAD GAME OBJECTS (Simon, Enemies, Items...) ===
+	DebugOut(L"[INFO] Loading game objects...\n");
+	CSimon* player1 = new CSimon(100.0f, 10.0f); // Vị trí bắt đầu của P1
+	KeyMappings p1_keys = {
+		DIK_UP, DIK_DOWN, DIK_LEFT, DIK_RIGHT, // up, down, left, right
+		DIK_Z,  // jump (ví dụ phím Z)
+		DIK_X,  // attack (ví dụ phím X)
+		DIK_C   // subweapon (ví dụ phím C)
+	};
+	player1->SetKeyMappings(p1_keys);
+	this->AddObject(player1);
+	this->players.push_back(player1);
+
+
+	// Tạo người chơi 2 (điều khiển bằng WASD)
+	CSimon* player2 = new CSimon(150.0f, 10.0f); // Vị trí bắt đầu của P2
+	KeyMappings p2_keys = {
+		DIK_W, DIK_S, DIK_A, DIK_D, // up, down, left, right
+		DIK_G, // jump
+		DIK_H, // attack
+		DIK_J  // subweapon
+	};
+	player2->SetKeyMappings(p2_keys);
+	this->AddObject(player2);
+	this->players.push_back(player2);
+
 	for (const auto& objData : data["objects"])
 	{
 		std::string type = objData["type"];
-		if (type == "Simon") {
+		LPGAMEOBJECT obj = nullptr;
+
+		if (type == "Candle") {
 			auto pos = objData["position"];
-			this->player = new CSimon(pos["x"], pos["y"]);
-			this->objects.push_back(this->player);
-			this->key_handler = this->player;
+			std::string itemTypeStr = objData["itemType"];
+			ItemType itemType = StringToItemType(itemTypeStr);
+
+			// Candle là đối tượng tĩnh
+			obj = new CCandle(pos["x"].get<float>(), pos["y"].get<float>(), itemType);
+
+			this->AddObject(obj, true); // Thêm vào danh sách tĩnh và Grid
 		}
-		else if (type == "Bricks") {
+		else if (type == "Bricks") // Chú ý: "Bricks" (số nhiều) cho khớp với JSON
+		{
 			auto props = objData["properties"];
-			for (int i = 0; i < props["count"]; i++) {
-				CBrick* b = new CBrick(props["startX"].get<float>() + i * props["cellWidth"].get<float>(), props["startY"]);
-				this->quadtree->insert(b);
+			float startX = props["startX"].get<float>();
+			float startY = props["startY"].get<float>();
+			int count = props["count"].get<int>();
+			float cellWidth = props["cellWidth"].get<float>();
+
+			// Dùng vòng lặp để tạo ra 'count' viên gạch
+			for (int i = 0; i < count; i++)
+			{
+				float brickX = startX + i * cellWidth;
+
+				// Tạo một viên gạch mới tại vị trí đã tính
+				LPGAMEOBJECT brick = new CBrick(brickX, startY);
+
+				// Thêm nó vào danh sách các đối tượng tĩnh
+				this->AddObject(brick, true);
 			}
-		}
-		else if (type == "Background") {
-			auto props = objData["properties"];
-			std::string spriteIdStr = props["spriteId"];
-			CSprite* bgSprite = sprites->Get(sprite_registry_for_animation[spriteIdStr]);
-			this->background = new CTiledBackground(0, 0, bgSprite, props["mapWidth"], props["mapHeight"]);
-			this->objects.push_back(this->background);
+			// Bỏ qua phần gán 'obj' ở cuối vì ta đã thêm các viên gạch trong vòng lặp
+			continue;
 		}
 	}
 
-	board = new CInfoBoard();
-
+	board = new CInfoBoard(this->GetPlayer(0), this);
 	DebugOut(L"[INFO] Scene loaded successfully.\n");
+	CItemSpawner::GetInstance()->SetScene(this);
 }
+
+void CPlayScene::AddObject(LPGAMEOBJECT obj, bool is_static)
+{
+	if (is_static) {
+		static_objects.push_back(obj);
+	}
+	else {
+		dynamic_objects.push_back(obj);
+	}
+}
+
+// Trong CPlayScene.cpp
 
 void CPlayScene::Update(DWORD dt)
 {
-	for (size_t i = 0; i < objects.size(); i++)
+	CGame* game = CGame::GetInstance();
+	BYTE* keyStates = game->GetKeyStates();
+	for (CSimon* p : players)
 	{
-		objects[i]->Update(dt);
+		// Ủy quyền xử lý input cho State của từng người chơi
+		if (p && p->currentState)
+		{
+			p->currentState->HandleInput(p, keyStates);
+		}
 	}
 
-	if (player) {
+	// --- Giai đoạn 1: Cập nhật các đối tượng ---
+
+	// Tạo một danh sách TẤT CẢ các đối tượng có thể va chạm
+	vector<LPGAMEOBJECT> collidable_objects;
+	collidable_objects.insert(collidable_objects.end(), static_objects.begin(), static_objects.end());
+	collidable_objects.insert(collidable_objects.end(), dynamic_objects.begin(), dynamic_objects.end());
+
+	// **LOGIC UPDATE MỚI, ĐƠN GIẢN HƠN**
+	// Lặp qua tất cả các đối tượng động và gọi Update của chúng.
+	// CGameObject::Update sẽ tự động xử lý việc gọi các component bên trong nó.
+	for (size_t i = 0; i < dynamic_objects.size(); i++)
+	{
+		// Truyền vào danh sách va chạm để RigidBody của đối tượng này xử lý
+		dynamic_objects[i]->Update(dt, &collidable_objects);
+	}
+
+	// Lặp qua các đối tượng tĩnh để cập nhật logic của chúng (nếu có, ví dụ Candle tự hủy)
+	for (size_t i = 0; i < static_objects.size(); i++)
+	{
+		// Đối tượng tĩnh thường không cần xét va chạm, nên có thể truyền nullptr
+		static_objects[i]->Update(dt, nullptr);
+	}
+
+	// --- CÁC PHẦN CÒN LẠI GIỮ NGUYÊN ---
+
+	CSimon* main_player = GetPlayer(0);
+	if (main_player) {
 		float cx, cy;
-		player->GetPosition(cx, cy);
+		main_player->GetPosition(cx, cy);
 		CGame::GetInstance()->GetCamera()->FollowSimon(cx, cy);
 	}
 
-	if (player && board)
+	if (game_time > 0)
 	{
-		// Tạm thời dùng giá trị giả định, bạn sẽ cần các hàm Get... từ Simon
-		board->Update(this->score, this->game_time, this->stage_number, 16, 16, 3);
+		// Lấy thời gian hệ thống hiện tại
+		DWORD now = GetTickCount64();
+
+		// Nếu đây là lần đầu tiên chạy, ta cần khởi tạo mốc thời gian
+		if (last_tick_count == 0)
+		{
+			last_tick_count = now;
+		}
+		// Kiểm tra xem đã đủ 1000ms trôi qua kể từ mốc cuối chưa
+		else if (now - last_tick_count >= 1000)
+		{
+			game_time--;
+			last_tick_count = now; // Cập nhật lại mốc thời gian mới
+		}
 	}
+
+	// --- Giai đoạn 2: Dọn dẹp các đối tượng đã bị xóa ---
+	// (Giữ nguyên phần code dọn dẹp của bạn)
+	dynamic_objects.erase(
+		std::remove_if(dynamic_objects.begin(), dynamic_objects.end(), [](LPGAMEOBJECT obj) {
+			if (obj->IsDeleted()) {
+				delete obj;
+				return true;
+			}
+			return false;
+			}),
+		dynamic_objects.end()
+	);
+
+	static_objects.erase(
+		std::remove_if(static_objects.begin(), static_objects.end(), [](LPGAMEOBJECT obj) {
+			if (obj->IsDeleted()) {
+				delete obj;
+				return true;
+			}
+			return false;
+			}),
+		static_objects.end()
+	);
 }
 
 void CPlayScene::Render()
@@ -200,13 +443,21 @@ void CPlayScene::Render()
 	FLOAT NewBlendFactor[4] = { 0,0,0,0 };
 	pD3DDevice->OMSetBlendState(g->GetAlphaBlending(), NewBlendFactor, 0xffffffff);
 
-	for (size_t i = 0; i < objects.size(); i++)
+	for (auto& tile : tiles)
 	{
-		objects[i]->Render();
+		tile->Render();
 	}
 
-	if (quadtree) {
-		quadtree->Render();
+	// Vẽ các vật thể tĩnh (gạch, nến...)
+	for (auto& obj : static_objects)
+	{
+		obj->Render();
+	}
+
+	// Vẽ các vật thể động (simon, enemy, item...)
+	for (auto& obj : dynamic_objects)
+	{
+		obj->Render();
 	}
 
 	if (board)
@@ -218,15 +469,24 @@ void CPlayScene::Render()
 
 void CPlayScene::Unload()
 {
-	for (size_t i = 0; i < objects.size(); i++)
+	// Xóa các object động
+	for (auto& obj : dynamic_objects)
 	{
-		delete objects[i];
+		delete obj;
 	}
-	objects.clear();
+	dynamic_objects.clear();
 
-	if (quadtree) {
-		delete quadtree;
-		quadtree = nullptr;
+	// Xóa các object tĩnh
+	for (auto& obj : static_objects)
+	{
+		delete obj;
+	}
+	static_objects.clear();
+
+	// Xóa sạch các con trỏ trong Grid, nhưng không xóa Grid Singleton
+	if (grid != nullptr)
+	{
+		grid->Clear();
 	}
 
 	if (board) {
@@ -234,8 +494,7 @@ void CPlayScene::Unload()
 		board = nullptr;
 	}
 
-	player = nullptr;
-	background = nullptr;
+	players.clear();
 
 	DebugOut(L"[INFO] Scene unloaded.\n");
 }

@@ -4,6 +4,106 @@
 CGame* CGame::__instance = NULL;
 
 /*
+	Standard sweptAABB implementation
+	Source: GameDev.net
+*/
+void CGame::SweptAABB(
+	float ml, float mt, float mr, float mb,
+	float dx, float dy,
+	float sl, float st, float sr, float sb,
+	float& t, float& nx, float& ny)
+{
+
+	float dx_entry, dx_exit, tx_entry, tx_exit;
+	float dy_entry, dy_exit, ty_entry, ty_exit;
+
+	float t_entry;
+	float t_exit;
+
+	t = -1.0f;			// no collision
+	nx = ny = 0;
+
+	// Broad-phase test 
+
+	float bl = dx > 0 ? ml : ml + dx;
+	float bt = dy > 0 ? mt : mt + dy;
+	float br = dx > 0 ? mr + dx : mr;
+	float bb = dy > 0 ? mb + dy : mb;
+
+	if (br < sl || bl > sr || bb < st || bt > sb) return;
+
+
+	if (dx == 0 && dy == 0) return;		// moving object is not moving > obvious no collision
+
+	if (dx > 0)
+	{
+		dx_entry = sl - mr;
+		dx_exit = sr - ml;
+	}
+	else if (dx < 0)
+	{
+		dx_entry = sr - ml;
+		dx_exit = sl - mr;
+	}
+
+
+	if (dy > 0)
+	{
+		dy_entry = st - mb;
+		dy_exit = sb - mt;
+	}
+	else if (dy < 0)
+	{
+		dy_entry = sb - mt;
+		dy_exit = st - mb;
+	}
+
+	if (dx == 0)
+	{
+		tx_entry = -999999.0f;
+		tx_exit = 999999.0f;
+	}
+	else
+	{
+		tx_entry = dx_entry / dx;
+		tx_exit = dx_exit / dx;
+	}
+
+	if (dy == 0)
+	{
+		ty_entry = -99999.0f;
+		ty_exit = 99999.0f;
+	}
+	else
+	{
+		ty_entry = dy_entry / dy;
+		ty_exit = dy_exit / dy;
+	}
+
+
+	if ((tx_entry < 0.0f && ty_entry < 0.0f) || tx_entry > 1.0f || ty_entry > 1.0f) return;
+
+	t_entry = max(tx_entry, ty_entry);
+	t_exit = min(tx_exit, ty_exit);
+
+	if (t_entry > t_exit) return;
+
+	t = t_entry;
+
+	if (tx_entry > ty_entry)
+	{
+		ny = 0.0f;
+		dx > 0 ? nx = -1.0f : nx = 1.0f;
+	}
+	else
+	{
+		nx = 0.0f;
+		dy > 0 ? ny = -1.0f : ny = 1.0f;
+	}
+
+}
+
+/*
 	Initialize DirectX, create a Direct3D device for rendering within the window, initial Sprite library for
 	rendering 2D images
 	- hWnd: Application window handle
@@ -124,7 +224,7 @@ void CGame::Init(HWND hWnd, HINSTANCE hInstance)
 	DebugOut((wchar_t*)L"[INFO] InitDirectX has been successful\n");
 
 	this->camera = new Camera(backBufferWidth, backBufferHeight);
-	this->camera->SetLimits(0, 0, 1000, 1000);
+	this->camera->SetLimits(0, 0, 736, 1000);
 
 	return;
 }
@@ -203,59 +303,32 @@ void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect)
 LPTEXTURE CGame::LoadTexture(LPCWSTR texturePath)
 {
 	ID3D10Resource* pD3D10Resource = NULL;
-	ID3D10Texture2D* tex = NULL;
+	ID3D10ShaderResourceView* pD3D10ShaderResourceView = NULL;
 
-	// Loads the texture into a temporary ID3D10Resource object
-	HRESULT hr = D3DX10CreateTextureFromFile(pD3DDevice,
+	// 1. Dùng một hàm duy nhất để tải file và tạo Shader Resource View
+	HRESULT hr = D3DX10CreateShaderResourceViewFromFile(
+		pD3DDevice, // Biến ID3D10Device* của lớp CGame
 		texturePath,
-		NULL, //&info,
 		NULL,
-		&pD3D10Resource,
+		NULL,
+		&pD3D10ShaderResourceView, // Hàm này trực tiếp tạo ra cái View
 		NULL);
 
-	// Make sure the texture was loaded successfully
 	if (FAILED(hr))
 	{
-		DebugOut((wchar_t*)L"[ERROR] Failed to load texture file: %s with error: %d\n", texturePath, hr);
-		return NULL;
+		DebugOut(L"[ERROR] Failed to load texture file: %s\n", texturePath);
+		return nullptr;
 	}
 
-	// Translates the ID3D10Resource object into a ID3D10Texture2D object
-	pD3D10Resource->QueryInterface(__uuidof(ID3D10Texture2D), (LPVOID*)&tex);
-	pD3D10Resource->Release();
+	// 2. Từ View, lấy ra con trỏ Resource gốc (chính là ID3D10Texture2D)
+	pD3D10ShaderResourceView->GetResource(&pD3D10Resource);
 
-	if (!tex) {
-		DebugOut((wchar_t*)L"[ERROR] Failed to convert from ID3D10Resource to ID3D10Texture2D \n");
-		return NULL;
-	}
-
-	//
-	// Create the Share Resource View for this texture 
-	// 	   
-	// Get the texture details
-	D3D10_TEXTURE2D_DESC desc;
-	tex->GetDesc(&desc);
-
-	// Create a shader resource view of the texture
-	D3D10_SHADER_RESOURCE_VIEW_DESC SRVDesc;
-
-	// Clear out the shader resource view description structure
-	ZeroMemory(&SRVDesc, sizeof(SRVDesc));
-
-	// Set the texture format
-	SRVDesc.Format = desc.Format;
-
-	// Set the type of resource
-	SRVDesc.ViewDimension = D3D10_SRV_DIMENSION_TEXTURE2D;
-	SRVDesc.Texture2D.MipLevels = desc.MipLevels;
-
-	ID3D10ShaderResourceView* gSpriteTextureRV = NULL;
-
-	pD3DDevice->CreateShaderResourceView(tex, &SRVDesc, &gSpriteTextureRV);
+	// 3. Tạo đối tượng CTexture mới chứa cả Texture gốc và View
+	LPTEXTURE newTexture = new CTexture((ID3D10Texture2D*)pD3D10Resource, pD3D10ShaderResourceView);
 
 	DebugOut(L"[INFO] Texture loaded Ok from file: %s \n", texturePath);
 
-	return new CTexture(tex, gSpriteTextureRV);
+	return newTexture;
 }
 
 int CGame::IsKeyDown(int KeyCode)
@@ -263,7 +336,7 @@ int CGame::IsKeyDown(int KeyCode)
 	return (keyStates[KeyCode] & 0x80) > 0;
 }
 
-void CGame::InitKeyboard(LPKEYEVENTHANDLER handler)
+void CGame::InitKeyboard()
 {
 	HRESULT hr = DirectInput8Create(this->hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (VOID**)&di, NULL);
 	if (hr != DI_OK)
@@ -318,8 +391,6 @@ void CGame::InitKeyboard(LPKEYEVENTHANDLER handler)
 		return;
 	}
 
-	this->keyHandler = handler;
-
 	DebugOut(L"[INFO] Keyboard has been initialized successfully\n");
 }
 
@@ -346,29 +417,7 @@ void CGame::ProcessKeyboard()
 			//DebugOut(L"[ERROR] DINPUT::GetDeviceState failed. Error: %d\n", hr);
 			return;
 		}
-	}
-
-	keyHandler->KeyState((BYTE*)&keyStates);
-
-	// Collect all buffered events
-	DWORD dwElements = KEYBOARD_BUFFER_SIZE;
-	hr = didv->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), keyEvents, &dwElements, 0);
-	if (FAILED(hr))
-	{
-		DebugOut(L"[ERROR] DINPUT::GetDeviceData failed. Error: %d\n", hr);
-		return;
-	}
-
-	// Scan through all buffered events, check if the key is pressed or released
-	for (DWORD i = 0; i < dwElements; i++)
-	{
-		int KeyCode = keyEvents[i].dwOfs;
-		int KeyState = keyEvents[i].dwData;
-		if ((KeyState & 0x80) > 0)
-			keyHandler->OnKeyDown(KeyCode);
-		else
-			keyHandler->OnKeyUp(KeyCode);
-	}
+	}	
 }
 
 void CGame::AddScene(LPSCENE scene)
@@ -388,7 +437,7 @@ void CGame::SwitchScene(int scene_id)
 	s->Load();
 
 	// Sau khi Load xong, key_handler của scene đã hợp lệ, bây giờ mới InitKeyboard
-	this->InitKeyboard(s->GetKeyEventHandler());
+	this->InitKeyboard();
 }
 
 CGame::~CGame()
