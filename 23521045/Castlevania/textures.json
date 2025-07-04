@@ -1,0 +1,38 @@
+[
+  {
+    "id": "SIMON",
+    "path": "textures\\simon.png"
+  },
+  {
+    "id": "MISC",
+    "path": "textures\\font.png"
+  },
+  {
+    "id": "BACKGROUND",
+    "path": "textures\\background.png"
+  },
+  {
+    "id": "FONT",
+    "path": "textures\\font.png"
+  },
+  {
+    "id": "BLACK",
+    "path": "textures\\pureblack.png"
+  },
+  {
+    "id": "MISC2",
+    "path": "textures\\NES - Castlevania - Items & Objects.png"
+  },
+  {
+    "id": "ENEMY",
+    "path": "textures\\NES - Castlevania - Items & Objects.png"
+  },
+  {
+    "id": "TILESET_1",
+    "path": "textures\\tileset.png"
+  },
+  {
+    "id": "TILESET_2",
+    "path": "textures\\tileset2.png"
+  }
+]
